@@ -1,0 +1,23 @@
+{
+  "name": "logicbrokerbot",
+  "version": "1.0.0",
+  "description": "Microsoft LUIS\u001b[D\u001b[D\u001b[D\u001b[DBot utilizing API LUIS to provide supply chain managment information",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qvissak/LogicBrokerBot.git"
+  },
+  "author": "Siena Biales, Trevor Phillips, Matthew Rubenstein, Quinn Vissak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qvissak/LogicBrokerBot/issues"
+  },
+  "homepage": "https://github.com/qvissak/LogicBrokerBot#readme",
+  "dependencies": {
+    "botbuilder": "^3.10.2",
+    "restify": "^6.0.1"
+  }
+}
