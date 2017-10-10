@@ -1,3 +1,4 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/2a3a0404d72d0e0bb02c/maintainability)](https://codeclimate.com/repos/59d638f77cdff10283001155/maintainability)
 # LogicBrokerBot
 Chat bot using Microsoft's Bot framework and LUIS API across Cortana, Skype, Slack and Facebook to handle common supply chain information such as specific order, shipment and shipping data.
 

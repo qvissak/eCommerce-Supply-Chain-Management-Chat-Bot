@@ -1,7 +1,7 @@
-var builder = require('botbuilder');
+const builder = require('botbuilder');
 
 // Create chat bot
-var connector = new builder.ConsoleConnector(
+const connector = new builder.ConsoleConnector(
 /*
     {
         appId:
@@ -9,7 +9,7 @@ var connector = new builder.ConsoleConnector(
     }
 */
 ).listen();
-var bot = new builder.UniversalBot(connector, function (session) {
+const bot = new builder.UniversalBot(connector, function (session) {
     // Bot dialog
     session.send("You said: %s", session.message.text);
 });
