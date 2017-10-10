@@ -11,5 +11,5 @@ const connector = new builder.ConsoleConnector(
 ).listen();
 const bot = new builder.UniversalBot(connector, function (session) {
   // Bot dialog
-  session.send("You said: %s", session.message.text);
+  session.send('You said: %s', session.message.text);
 });
