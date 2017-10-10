@@ -27,5 +27,5 @@ npm install
 
 ## Deployment
 ```
-node app.js
+npm start
 ```
