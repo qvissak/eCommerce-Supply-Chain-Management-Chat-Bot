@@ -21,7 +21,7 @@
   "homepage": "https://github.com/qvissak/LogicBrokerBot#readme",
   "dependencies": {
     "bluebird": "3.5.1",
-    "botbuilder": "3.10.2",
+    "botbuilder": "3.11.0",
     "request-promise": "4.2.2",
     "restify": "6.0.1"
   },
