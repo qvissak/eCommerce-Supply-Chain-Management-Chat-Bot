@@ -2,6 +2,10 @@
   "plugins": [
     "react"
   ],
-  "extends": ["airbnb"
-  ]
+  "extends": [
+    "airbnb"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 6
+  }
 }
