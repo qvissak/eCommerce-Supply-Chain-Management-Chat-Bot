@@ -25,7 +25,7 @@ const bot = new builder.UniversalBot(connector, ((session) => {
   if (session.message.address.channelId==='slack') {
     if(session.message.address.conversation.isGroup) {
       if (session.message.text.includes(process.env.SLACK_HANDLE)) {
-        session.send('You said: %s', session.message.text);
+        session.send('You said: %s', session.message.replace(`${process.env.SLACK_HANDLE} `, ''));
       }
       session.endDialog();
     }
