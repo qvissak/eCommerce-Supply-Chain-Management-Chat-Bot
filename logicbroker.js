@@ -13,7 +13,7 @@ module.exports = [
     // API key validation
     function (session) {
         var key = session.dialogData.logicbrokerAPIKey;
-        session.send('Validating your API key, %s', key);
+        session.send(`Validating your API key, ${key}`);
 
         // async
         logicbrokerService.validateAPIKey(key)

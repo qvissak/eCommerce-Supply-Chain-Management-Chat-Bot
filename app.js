@@ -19,7 +19,7 @@ const connector = new builder.ChatConnector({
 // Listen for messages from users 
 server.post('/api/messages', connector.listen());
 
-var DialogLabels = {
+const DialogLabels = {
     Login: 'Login',
     Help: 'Help'
 };
@@ -44,12 +44,12 @@ const rootDialogs = [
 
         // on error, start over
         session.on('error', function (err) {
-            session.send('Failed with message: %s', err.message);
+            session.send(`Failed with message: ${err.message}`);
             session.endDialog();
         });
 
         // continue on proper dialog
-        var selection = result.response.entity;
+        const selection = result.response.entity;
         switch (selection) {
             case DialogLabels.Login:
                 return session.beginDialog('login');
