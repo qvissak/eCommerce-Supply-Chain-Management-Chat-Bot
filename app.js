@@ -1,12 +1,16 @@
 // This loads the environment variables from the .env file
 require('dotenv').config();
 
-var restify = require('restify');
-var builder = require('botbuilder');
+const restify = require('restify');
+const builder = require('botbuilder');
+
+// Initialize global variables
+const { GlobalVars } = require('./globalVars');
+GlobalVars.init();
 
 // Setup Restify Server
-var server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
+const server = restify.createServer();
+server.listen(process.env.port || process.env.PORT || 3978, () => {
    console.log('%s listening to %s', server.name, server.url); 
 });
 
@@ -16,16 +20,16 @@ const connector = new builder.ChatConnector({
 	appPassword: process.env.MICROSOFT_APP_PASSWORD,
 });
 
-// Listen for messages from users 
+// Listen for messages from users
 server.post('/api/messages', connector.listen());
 
 const DialogLabels = {
     Login: 'Login',
-    Help: 'Help'
+    Help: 'Help',
 };
 
 const rootDialogs = [
-    function (session) {
+    session => {
         builder.Prompts.choice(
             session,
             'Do you want to login to Logicbroker or would you like help?',
@@ -35,7 +39,7 @@ const rootDialogs = [
                 retryPrompt: 'Not a valid option'
             });
     },
-    function (session, result) {
+    (session, result) => {
         if (!result.response) {
             // exhausted attemps and no selection, start over
             session.send('Oops! Too many attemps. But don\'t worry, I\'m handling that exception and you can try again!');
@@ -43,7 +47,7 @@ const rootDialogs = [
         }
 
         // on error, start over
-        session.on('error', function (err) {
+        session.on('error', (err) => {
             session.send(`Failed with message: ${err.message}`);
             session.endDialog();
         });
@@ -70,12 +74,12 @@ function shouldRespond(session) {
 	return false;
 }
 
-bot.dialog('login', require('./logicbroker'));
-bot.dialog('help', require('./help'))
+bot.dialog('login', require('./dialogs/authentication'));
+bot.dialog('help', require('./dialogs/help'))
     .triggerAction({
         matches: [/help/i, /support/i, /problem/i]
     });
 // log any bot errors into the console
-bot.on('error', function (e) {
+bot.on('error', (e) => {
 	console.error('And error ocurred', e);
 });
