@@ -1,11 +1,9 @@
-var Promise = require('bluebird');
-
 module.exports = {
-    validateAPIKey: function (key) {
-        return new Promise(function (resolve) {
-            var response = '{ "data" : "this is a fake response" }';
+    validateAPIKey: (key) => 
+        new Promise(function (resolve) {
+            const response = '{ "data" : "this is a fake response" }';
             // complete promise with a timer to simulate async response
-            setTimeout(function () { resolve(response); }, 1000);
-        });
+            setTimeout(function () { resolve(response); }, 2000);
+        })
     }
 };
