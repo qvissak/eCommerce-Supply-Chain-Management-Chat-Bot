@@ -39,7 +39,7 @@ const rootDialogs = [
         maxRetries: 3,
         retryPrompt: 'Not a valid option',
       }
-);
+    );
   },
   (session, result) => {
     if (!result.response) {
@@ -67,14 +67,21 @@ const rootDialogs = [
 
 const bot = new builder.UniversalBot(connector, rootDialogs);
 
-function shouldRespond(session) {
-  const testing = process.env.BOT_TESTING === 'True';
-  if (testing || session.message.address.channelId === 'slack') {
-    const { isGroup } = session.message.address.conversation;
-    return !isGroup || (isGroup && session.message.text.includes(process.env.SLACK_HANDLE));
-  }
-  return false;
-}
+// Initialize Bot Middleware
+const { botbuilder } = require('./middleware/setChannelContext');
+
+bot.use({
+  botbuilder,
+});
+
+// function shouldRespond(session) {
+//   const testing = process.env.BOT_TESTING === 'True';
+//   if (testing || session.message.address.channelId === 'slack') {
+//     const { isGroup } = session.message.address.conversation;
+//     return !isGroup || (isGroup && session.message.text.includes(process.env.SLACK_HANDLE));
+//   }
+//   return false;
+// }
 
 bot.dialog('login', require('./dialogs/authentication'));
 bot.dialog('help', require('./dialogs/help'))
