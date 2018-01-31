@@ -1,5 +1,5 @@
 const builder = require('botbuilder');
-const logicbrokerService = require('./logicbroker-service');
+const logicbrokerService = require('../utils/logicbroker-service');
 
 module.exports = [
   // API key retrieval
