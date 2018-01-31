@@ -6,9 +6,8 @@ const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
 
 // Initialize global variables
-const { GlobalVars } = require('./utils/globalVars');
-
-// GlobalVars.init();
+const GlobalVars = require('./utils/globalVars');
+GlobalVars.init();
 
 // Setup Azure Cosmos DB database connection
 const documentDbOptions = {
