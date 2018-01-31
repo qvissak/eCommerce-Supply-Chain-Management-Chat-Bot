@@ -51,7 +51,7 @@ const rootDialogs = [
         maxRetries: 3,
         retryPrompt: 'Not a valid option',
       }
-);
+	);
   },
   (session, result) => {
     if (!result.response) {
@@ -81,8 +81,8 @@ const bot = new builder.UniversalBot(connector, rootDialogs)
 .set('storage', cosmosStorage);
 
 function shouldRespond(session) {
-  const testing = process.env.BOT_TESTING === 'True';
-  if (testing || session.message.address.channelId === 'slack') {
+  if (process.env.BOT_TESTING === 'True') { return true; }
+  if (session.message.address.channelId === 'slack') {
     const { isGroup } = session.message.address.conversation;
     return !isGroup || (isGroup && session.message.text.includes(process.env.SLACK_HANDLE));
   }
@@ -91,9 +91,16 @@ function shouldRespond(session) {
 
 bot.dialog('login', require('./dialogs/authentication'));
 bot.dialog('help', require('./dialogs/help'))
-  .triggerAction({
-    matches: [/help/i, /support/i, /problem/i],
-  });
+	.triggerAction({
+	    matches: [/help/i, /support/i, /problem/i],
+	    onSelectAction: (session, args, next) => {
+	        // Add the help dialog to the top of the dialog stack 
+	        // (override the default behavior of replacing the stack)
+			console.log('beginning dialog... args.action  = ', args.action);
+	        session.beginDialog(args.action, args);
+	    }
+	});
+
 // log any bot errors into the console
 bot.on('error', (e) => {
   console.error('And error ocurred', e);

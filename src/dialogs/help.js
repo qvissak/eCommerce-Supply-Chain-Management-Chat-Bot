@@ -1,4 +1,9 @@
-module.exports = (session) => {
-  session.send('In the future, I will print out a list of commands for you!');
-  session.endDialog();
+// help dialog
+module.exports = function (session, args, next) {
+    session.send('In the future, I will print out a list of commands for you!');
+	console.log('just called a prompt...');
+	console.log('session = ', session);
+	console.log('results = ', results);
+	console.log('next = ', next);
+	session.endDialog();
 };
