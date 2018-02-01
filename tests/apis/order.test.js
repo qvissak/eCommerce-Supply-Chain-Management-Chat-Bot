@@ -30,4 +30,16 @@ describe('Order Endpoints - LogicBroker API Service', function() {
         });
     });
   });
+
+  describe('getReadyOrders', function() {
+    it('should return orders that are ready to ship', function() {
+      return ordersApi.getReadyOrders()
+        .then((data) => {
+          expect(data.Records).to.exist;
+          expect(_.isArray(data.Records)).to.be.true;
+          expect(data.TotalRecords).to.exist;
+          expect(data.TotalRecords === data.Records.length).to.be.true;
+        });
+    });
+  });
 });
