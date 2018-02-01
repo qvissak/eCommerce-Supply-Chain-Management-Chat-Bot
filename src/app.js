@@ -38,6 +38,7 @@ server.post('/api/messages', connector.listen());
 const DialogLabels = {
   Login: 'Login',
   Help: 'Help',
+  Demo: 'Demo'
 };
 
 const rootDialogs = [
@@ -45,7 +46,7 @@ const rootDialogs = [
     builder.Prompts.choice(
       session,
       'Do you want to login to Logicbroker or would you like help?',
-      [DialogLabels.Login, DialogLabels.Help],
+      [DialogLabels.Login, DialogLabels.Help, DialogLabels.Demo],
       {
         maxRetries: 3,
         retryPrompt: 'Not a valid option',
@@ -89,6 +90,7 @@ function shouldRespond(session) {
 }
 
 bot.dialog('login', require('./dialogs/authentication'));
+bot.dialog('demo', require('./dialogs/demo'));
 bot.dialog('help', require('./dialogs/help'))
 	.triggerAction({
 	    matches: [/help/i, /support/i, /problem/i],
