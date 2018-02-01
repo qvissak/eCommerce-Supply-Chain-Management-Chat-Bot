@@ -3,7 +3,7 @@ const logicbrokerService = require('../utils/logicbroker-service');
 
 module.exports = [
   // API key retrieval
-  session => builder.Prompts.text(session, 'Welcome to Logicbroker! We noticed you do not have an API Key setup. Here are instructions to providing the API Key.'),
+  session => builder.Prompts.text(session, 'Welcome to Logicbroker! We noticed you do not have an API Key setup. Please provide your Logicbroker API Key.'),
   (session, results, next) => {
     session.dialogData.logicbrokerAPIKey = results.response;
     next();
@@ -22,6 +22,6 @@ module.exports = [
   },
   (session, results, next) => {
       //Pretend get open orders
-      session.send('Order number: 69696969\n Order date: 01/29/2018 03:56 PM');
+      session.send('Order number: 69696969\n\nOrder date: 01/29/2018 03:56 PM');
   }
 ];

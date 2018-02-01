@@ -73,6 +73,8 @@ const rootDialogs = [
         return session.beginDialog('login');
       case DialogLabels.Help:
         return session.beginDialog('help');
+	case DialogLabels.Demo:
+		return session.beginDialog('demo');
     }
   },
 ];
