@@ -1,14 +1,18 @@
 const request = require('request-promise');
+const config = require('../../config');
 
 const reqPromise = (uri, method, body=undefined) => {
   let opts = {
-    uri: `https://stage.commerceapi.io/api/${uri}?subscription-key=${require('../../config').apiKey}`,
+    uri: `https://stage.commerceapi.io/api/${uri}?subscription-key=${config.apiKey}`,
     method
   }
-  return (body) ? request({
-    ...opts,
-    body
-  }) : request(opts);
+
+  return body
+    ? request({
+      ...opts,
+      body
+    })
+    : request(opts);
 }
 
 /**
