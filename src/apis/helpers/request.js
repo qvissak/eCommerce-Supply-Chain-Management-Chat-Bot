@@ -1,4 +1,5 @@
 const request = require('request-promise');
+const _ = require('lodash');
 const config = require('../../config');
 
 const reqPromise = (uri, method, qsp = {}, body = undefined) => {
