@@ -9,20 +9,20 @@ const orderResHelper = (data) => {
 
 describe('Order Endpoints - LogicBroker API Service', function() {
   describe('getOrders', function() {
-    it('no parameter should return all orders', async function() {
+    it('no parameter should return all orders', function() {
       return ordersApi.getOrders()
         .then((data) => {
           orderResHelper(data);
         });
     });
-    it('status parameter set to Ignored should return only Ignored orders ', async function() {
+    it('status parameter set to Ignored should return only Ignored orders ', function() {
       return ordersApi.getOrders('Ignored')
         .then((data) => {
           orderResHelper(data);
           data.SalesOrders.forEach(order => expect(order.Status === 'Ignored').to.be.true);
         });
     });
-    it('status parameter set to Cancelled should return only Cancelled orders ', async function() {
+    it('status parameter set to Cancelled should return only Cancelled orders ', function() {
       return ordersApi.getOrders('Cancelled')
         .then((data) => {
           orderResHelper(data);
