@@ -28,7 +28,7 @@ const reqPromise = (uri, method, qsp = {}, body = undefined) => {
  * @param {Object} queryParams
  * @returns {Promise}
  */
-const get = (uri, queryParams = {}) => reqPromise(uri, 'GET', queryParams);
+const get = (uri, queryParams) => reqPromise(uri, 'GET', queryParams);
 
 /**
  * Make post request to uri
@@ -37,7 +37,7 @@ const get = (uri, queryParams = {}) => reqPromise(uri, 'GET', queryParams);
  * @param {Object} body
  * @returns {Promise}
  */
-const post = (uri, queryParams = {}, body) => reqPromise(uri, 'POST', queryParams, body);
+const post = (uri, queryParams, body) => reqPromise(uri, 'POST', queryParams, body);
 
 /**
  * Make delete request to uri
@@ -45,7 +45,7 @@ const post = (uri, queryParams = {}, body) => reqPromise(uri, 'POST', queryParam
  * @param {Object} queryParams
  * @returns {Promise}
  */
-const del = (uri, queryParams = {}) => reqPromise(uri, 'DELETE', queryParams);
+const del = (uri, queryParams) => reqPromise(uri, 'DELETE', queryParams);
 
 /**
  * Make put request to uri
@@ -54,7 +54,7 @@ const del = (uri, queryParams = {}) => reqPromise(uri, 'DELETE', queryParams);
  * @param {Object} body
  * @returns {Promise}
  */
-const put = (uri, queryParams = {}, body) => reqPromise(uri, 'PUT', queryParams, body);
+const put = (uri, queryParams, body) => reqPromise(uri, 'PUT', queryParams, body);
 
 module.exports = {
   get,
