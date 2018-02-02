@@ -4,11 +4,8 @@ require('dotenv').config();
 const restify = require('restify');
 const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
-
-// Initialize global variables
-const GlobalVars = require('./utils/globalVars');
-
-GlobalVars.init();
+const authentication = require('./dialogs/authentication');
+const dialogHelp = require('./dialogs/help');
 
 // Setup Azure Cosmos DB database connection
 const documentDbOptions = {
@@ -89,8 +86,8 @@ function shouldRespond(session) {
   return false;
 }
 
-bot.dialog('login', require('./dialogs/authentication'));
-bot.dialog('help', require('./dialogs/help'))
+bot.dialog('login', authentication);
+bot.dialog('help', dialogHelp)
   .triggerAction({
     matches: [/help/i, /support/i, /problem/i],
   });
