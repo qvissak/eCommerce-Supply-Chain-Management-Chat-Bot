@@ -7,14 +7,15 @@ const azure = require('botbuilder-azure');
 
 // Initialize global variables
 const GlobalVars = require('./utils/globalVars');
+
 GlobalVars.init();
 
 // Setup Azure Cosmos DB database connection
 const documentDbOptions = {
-  host: process.env.DB_HOST, 
-  masterKey: process.env.DB_MASTERKEY, 
-  database: 'botdocs',   
-  collection: 'botdata'
+  host: process.env.DB_HOST,
+  masterKey: process.env.DB_MASTERKEY,
+  database: 'botdocs',
+  collection: 'botdata',
 };
 
 const docDbClient = new azure.DocumentDbClient(documentDbOptions);
@@ -49,8 +50,8 @@ const rootDialogs = [
       {
         maxRetries: 3,
         retryPrompt: 'Not a valid option',
-      }
-);
+      },
+    );
   },
   (session, result) => {
     if (!result.response) {
@@ -77,7 +78,7 @@ const rootDialogs = [
 ];
 
 const bot = new builder.UniversalBot(connector, rootDialogs)
-.set('storage', cosmosStorage);
+  .set('storage', cosmosStorage);
 
 function shouldRespond(session) {
   const testing = process.env.BOT_TESTING === 'True';
