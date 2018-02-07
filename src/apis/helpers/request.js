@@ -2,15 +2,18 @@ const request = require('request-promise');
 const _ = require('lodash');
 const config = require('../../config');
 
-const reqPromise = (uri, method, qsp = {}, body = undefined) => {
-  const queryParams = _.merge({}, { 'subscription-key': config.apiKey }, qsp);
+const reqPromise = (uri, method, qsp = {}, body = undefined, useDefaultApiKey = true) => {
+  let queryParams = qsp;
+  if (useDefaultApiKey) {
+  	queryParams = _.merge({}, { 'subscription-key': config.apiKey }, qsp);
+  }
   let qs = '';
   Object.keys(queryParams).forEach((param, index) => {
     const sep = index === 0 ? '?' : '&';
     qs += `${sep}${param}=${queryParams[param]}`;
   });
   const opts = {
-    uri: `https://stage.commerceapi.io/api/${uri}${qs}`,
+    uri: `https://stage.commerceapi.io/api${uri}${qs}`,
     method,
     json: true,
   };
@@ -62,4 +65,5 @@ module.exports = {
   post,
   del,
   put,
+  reqPromise
 };

@@ -4,8 +4,7 @@ require('dotenv').config();
 const restify = require('restify');
 const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
-const authentication = require('./dialogs/authentication');
-const dialogHelp = require('./dialogs/help');
+const constants = require('./utils/constants');
 
 // Setup Azure Cosmos DB database connection
 const documentDbOptions = {
@@ -34,17 +33,31 @@ const connector = new builder.ChatConnector({
 server.post('/api/messages', connector.listen());
 
 const DialogLabels = {
-  Login: 'Login',
-  Help: 'Help',
-  Demo: 'Demo'
+  Orders: 'Orders',
+	Help: 'Help'
 };
 
 const rootDialogs = [
+	(session, args, next) => {
+		if (session.userData.didGreet === undefined || session.userData.didGreet === false) {
+			session.send(`Hi, I\'m ${constants.botName}.`);
+			session.userData.didGreet = true;
+		}
+		next();
+	},
+	(session, args, next) => {
+		if (session.privateConversationData.apiKey === undefined || 
+			session.privateConversationData.validApiKey === false) {
+				return session.beginDialog(constants.dialogNames.login);
+		} else {
+			next();
+		}
+	},
   (session) => {
     builder.Prompts.choice(
       session,
-      'Do you want to login to Logicbroker or would you like help?',
-      [DialogLabels.Login, DialogLabels.Help, DialogLabels.Demo],
+      'How can I help you today?',
+      [DialogLabels.Orders, DialogLabels.Help],
       {
         maxRetries: 3,
         retryPrompt: 'Not a valid option',
@@ -54,25 +67,17 @@ const rootDialogs = [
   (session, result) => {
     if (!result.response) {
       // exhausted attemps and no selection, start over
-      session.send('Oops! Too many attemps. But don\'t worry, I\'m handling that exception and you can try again!');
+      session.send('Oops! Too many attemps. But don\'t worry, you can try again!');
       return session.endDialog();
     }
-
-    // on error, start over
-    session.on('error', (err) => {
-      session.send(`Failed with message: ${err.message}`);
-      session.endDialog();
-    });
 
     // continue on proper dialog
     const selection = result.response.entity;
     switch (selection) {
-      case DialogLabels.Login:
-        return session.beginDialog('login');
+      case DialogLabels.Orders:
+        return session.beginDialog(constants.dialogNames.orders);
       case DialogLabels.Help:
-        return session.beginDialog('help');
-	case DialogLabels.Demo:
-		return session.beginDialog('demo');
+        return session.beginDialog(constants.dialogNames.help);
     }
   },
 ];
@@ -80,24 +85,14 @@ const rootDialogs = [
 const bot = new builder.UniversalBot(connector, rootDialogs)
   .set('storage', cosmosStorage);
 
-function shouldRespond(session) {
-  if (process.env.BOT_TESTING === 'True') { return true; }
-  if (session.message.address.channelId === 'slack') {
-    const { isGroup } = session.message.address.conversation;
-    return !isGroup || (isGroup && session.message.text.includes(process.env.SLACK_HANDLE));
-  }
-  return false;
-}
-
-bot.dialog('login', require('./dialogs/authentication'));
-bot.dialog('demo', require('./dialogs/demo'));
-bot.dialog('help', require('./dialogs/help'))
+bot.dialog(constants.dialogNames.orders, require('./dialogs/orders'));
+bot.dialog(constants.dialogNames.login, require('./dialogs/login'));
+bot.dialog(constants.dialogNames.help, require('./dialogs/help'))
 	.triggerAction({
 	    matches: [/help/i, /support/i, /problem/i],
 	    onSelectAction: (session, args, next) => {
 	        // Add the help dialog to the top of the dialog stack 
 	        // (override the default behavior of replacing the stack)
-			console.log('beginning dialog... args.action  = ', args.action);
 	        session.beginDialog(args.action, args);
 	    }
 	});

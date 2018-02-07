@@ -1,10 +1,13 @@
-const Promise = require('bluebird');
+const request = require('../apis/helpers/request');
 
 module.exports = {
-  validateAPIKey: key =>
-    new Promise(((resolve) => {
-      const response = '{ "data" : "this is a fake response" }';
-      // complete promise with a timer to simulate async response
-      setTimeout(() => { resolve(response); }, 2000);
-    })),
+	validateAPIKey: key => {
+		return request.reqPromise('/v2/Acknowledgements',
+									'GET',
+									{ 'subscription-key': key },
+									undefined,
+									useDefaultApiKey = false)
+		.then(response => true)
+		.catch(err => false);
+	}
 };
