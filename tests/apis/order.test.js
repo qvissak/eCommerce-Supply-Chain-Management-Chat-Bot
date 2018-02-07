@@ -1,4 +1,4 @@
-const ordersApi = require('../../src/apis/order');
+const ordersApi = require('../../src/apis/order/api');
 
 const orderResHelper = (data) => {
   expect(data.Records).to.exist;
