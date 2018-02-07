@@ -6,6 +6,7 @@ const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
 const authentication = require('./dialogs/authentication');
 const dialogHelp = require('./dialogs/help');
+const dialogOrders = require('./dialogs/orders');
 
 // Setup Azure Cosmos DB database connection
 const documentDbOptions = {
@@ -32,47 +33,6 @@ const connector = new builder.ChatConnector({
 
 // Listen for messages from users
 server.post('/api/messages', connector.listen());
-
-const DialogLabels = {
-  Login: 'Login',
-  Help: 'Help',
-};
-
-const rootDialogs = [
-  (session) => {
-    builder.Prompts.choice(
-      session,
-      'Do you want to login to Logicbroker or would you like help?',
-      [DialogLabels.Login, DialogLabels.Help],
-      {
-        maxRetries: 3,
-        retryPrompt: 'Not a valid option',
-      },
-    );
-  },
-  (session, result) => {
-    if (!result.response) {
-      // exhausted attemps and no selection, start over
-      session.send('Oops! Too many attemps. But don\'t worry, I\'m handling that exception and you can try again!');
-      return session.endDialog();
-    }
-
-    // on error, start over
-    session.on('error', (err) => {
-      session.send(`Failed with message: ${err.message}`);
-      session.endDialog();
-    });
-
-    // continue on proper dialog
-    const selection = result.response.entity;
-    switch (selection) {
-      case DialogLabels.Login:
-        return session.beginDialog('login');
-      case DialogLabels.Help:
-        return session.beginDialog('help');
-    }
-  },
-];
 
 //Create your bot with a function to receive messages from the user
 const bot = new builder.UniversalBot(connector, function (session, args) {
@@ -108,31 +68,7 @@ function shouldRespond(session) {
   return false;
 }
 
-bot.dialog('getOrders',
-  (session, args) => {
-    //Resolve and store any Orders.Number entity passed from LUIS.
-    var intent = args.intent;
-    var orderNumber = builder.EntityRecognizer.findEntity(intent.entities, 'Orders.Number');
-    var openOrders = builder.EntityRecognizer.findEntity(intent.entities, 'Orders.Open');
-    var failedOrders = builder.EntityRecognizer.findEntity(intent.entities, 'Orders.Failed');
-
-
-    if (orderNumber){
-      session.send('Ok, retrieving info for order number %s.', orderNumber.entity);
-      //Code to retrieve info
-    }
-    else if (openOrders){
-      session.send('Ok, retrieving open orders');
-    }
-    else if (failedOrders){
-      session.send('Ok, retrieving failed orders');
-    }
-    else {
-      session.send('Oops... I failed.');
-    }
-    session.endDialog();
-  }
-  ).triggerAction({
+bot.dialog('getOrders', dialogOrders).triggerAction({
     matches: 'GetOrders'
   })
 
