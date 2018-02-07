@@ -4,5 +4,12 @@
   ],
   "extends": [
     "airbnb"
-  ]
+  ],
+  "globals": {
+    "Promise": true,
+    "_": true,
+    "request": true,
+    "logicBroker": true,
+    "Dialog": true
+  }
 }

@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "dev": "nodemon src/app.js",
+    "test": "nyc mocha --opts tests/mocha.opts"
   },
   "repository": {
     "type": "git",
@@ -36,8 +37,11 @@
     "eslint-config-airbnb": "16.1.0",
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-jsx-a11y": "6.0.3",
+    "eslint-plugin-mocha": "4.11.0",
     "eslint-plugin-react": "7.5.1",
     "mocha": "5.0.0",
-    "nodemon": "1.14.11"
+    "mochawesome": "3.0.2",
+    "nodemon": "1.14.11",
+    "nyc": "11.4.1"
   }
 }

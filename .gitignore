@@ -194,3 +194,6 @@ fabric.properties
 .idea/sonarlint
 
 # End of https://www.gitignore.io/api/node,webstorm,sublimetext,visualstudiocode,macOS
+
+# Mochawesome reporter
+mochawesome-report/**/*
