@@ -5,7 +5,11 @@
   "extends": [
     "airbnb"
   ],
-  "parserOptions": {
-    "ecmaVersion": 6
+  "globals": {
+    "Promise": true,
+    "_": true,
+    "request": true,
+    "logicBroker": true,
+    "Dialog": true
   }
 }

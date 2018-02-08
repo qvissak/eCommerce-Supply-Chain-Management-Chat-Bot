@@ -8,9 +8,10 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 What things you need to install the software and how to install them.
 
-* [Git](https://git-scm.com/) - The version control software used
-* [Node](https://nodejs.org/en/) - The server framework used
-* [npm](https://www.npmjs.com/) - The package manager used
+* [Git](https://git-scm.com/) - Version control software
+* [Node](https://nodejs.org/en/) - Server framework
+* [npm](https://www.npmjs.com/) - Package manager
+* [Bot Framework Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases) - Local Environment Simulator
 
 ### Installing
 A step by step series of commands that tell you how to get a development environment running.

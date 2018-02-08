@@ -1,0 +1,5 @@
+--reporter mochawesome
+--require tests/setTestEnvironment.js
+--recursive
+--timeout 20s
+tests/**/*.test.js

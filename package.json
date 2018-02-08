@@ -1,15 +1,15 @@
 {
   "name": "logicbrokerbot",
   "version": "1.0.0",
-  "description": "Microsoft LUIS\u001b[D\u001b[D\u001b[D\u001b[DBot utilizing API LUIS to provide supply chain managment information",
-  "main": "app.js",
+  "description": "Microsoft LUIS Chat Bot utilizing API LUIS to provide supply chain managment information",
+  "main": "src/app.js",
   "engines": {
     "node": ">=8.4"
   },
   "scripts": {
-    "start": "node app.js",
-    "lint": "eslint -c .eslintrc app.js",
-    "lint:fix": "eslint -c .eslintrc --fix app.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "nyc mocha --opts tests/mocha.opts"
   },
   "repository": {
     "type": "git",
@@ -23,19 +23,25 @@
   "homepage": "https://github.com/qvissak/LogicBrokerBot#readme",
   "dependencies": {
     "bluebird": "3.5.1",
-    "botbuilder": "3.11.0",
-    "dotenv": "4.0.0",
+    "botbuilder": "3.14.0",
+    "botbuilder-azure": "3.0.4",
+    "dotenv": "5.0.0",
+    "lodash": "4.17.4",
     "request": "2.83.0",
     "request-promise": "4.2.2",
-    "restify": "6.0.1"
+    "restify": "6.3.4"
   },
   "devDependencies": {
     "chai": "4.1.2",
-    "eslint": "4.8.0",
-    "eslint-config-airbnb": "16.0.0",
-    "eslint-plugin-import": "2.7.0",
-    "eslint-plugin-jsx-a11y": "6.0.2",
-    "eslint-plugin-react": "7.4.0",
-    "mocha": "4.0.1"
+    "eslint": "4.16.0",
+    "eslint-config-airbnb": "16.1.0",
+    "eslint-plugin-import": "2.8.0",
+    "eslint-plugin-jsx-a11y": "6.0.3",
+    "eslint-plugin-mocha": "4.11.0",
+    "eslint-plugin-react": "7.5.1",
+    "mocha": "5.0.0",
+    "mochawesome": "3.0.2",
+    "nodemon": "1.14.11",
+    "nyc": "11.4.1"
   }
 }
