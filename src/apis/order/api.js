@@ -1,12 +1,11 @@
 const Promise = require('bluebird');
-const request = require('./helpers/request');
+const request = require('../helpers/request');
 
 const getOrders = (status = '') => new Promise(async (resolve) => {
   try {
-    // Using v1 since v2 raises Internal Server Error
     const req = status ? request.get('v2/Orders', { status }) : request.get('v2/Orders');
-    const orderRes = await req;
-    resolve(orderRes);
+    const res = await req;
+    resolve(res);
   } catch (e) {
     resolve(e);
   }
@@ -14,8 +13,8 @@ const getOrders = (status = '') => new Promise(async (resolve) => {
 
 const getReadyOrders = () => new Promise(async (resolve) => {
   try {
-    const orderRes = await request.get('v2/Orders/Ready');
-    resolve(orderRes);
+    const res = await request.get('v2/Orders/Ready');
+    resolve(res);
   } catch (e) {
     resolve(e);
   }

@@ -1,10 +1,10 @@
-const acknowledgement = require('./acknowledgement');
-const inventory = require('./inventory');
-const invoice = require('./invoice');
-const order = require('./order');
-const product = require('./product');
-const shipment = require('./shipment');
-const status = require('./status');
+const acknowledgement = require('./acknowledgement/index');
+const inventory = require('./inventory/index');
+const invoice = require('./invoice/index');
+const order = require('./order/index');
+const product = require('./product/index');
+const shipment = require('./shipment/index');
+const status = require('./status/index');
 
 module.exports = {
   acknowledgement,
