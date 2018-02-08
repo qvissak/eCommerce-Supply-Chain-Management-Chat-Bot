@@ -39,19 +39,19 @@ const DialogLabels = {
 
 const rootDialogs = [
 	(session, args, next) => {
-		if (session.userData.didGreet === undefined || session.userData.didGreet === false) {
-			session.send(`Hi, I\'m ${constants.botName}.`);
-			session.userData.didGreet = true;
+		if (session.conversationData.didGreet === undefined || session.conversationData.didGreet === false) {
+			// session.userData is volatile, it will be cleared at the end of the conversation
+			// hence, the bot will say hello at the start of every conversation
+			session.send(`Hello, I\'m ${constants.botName}.`);
+			session.conversationData.didGreet = true;
 		}
 		next();
 	},
 	(session, args, next) => {
-		if (session.privateConversationData.apiKey === undefined || 
-			session.privateConversationData.validApiKey === false) {
-				return session.beginDialog(constants.dialogNames.login);
-		} else {
-			next();
+		if (session.userData.apiKey === undefined) {
+		    session.beginDialog(constants.dialogNames.login);
 		}
+		next();
 	},
   (session) => {
     builder.Prompts.choice(

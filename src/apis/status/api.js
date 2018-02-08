@@ -3,7 +3,7 @@ const request = require('../helpers/request');
 
 const getStatuses = () => new Promise(async (resolve) => {
   try {
-    const res = await request.get('v1/Statuses');
+    const res = await request.get('/v1/Statuses');
     resolve(res.Body);
   } catch (e) {
     resolve(e);
