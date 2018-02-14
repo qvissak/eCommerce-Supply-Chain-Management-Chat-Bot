@@ -1,12 +1,23 @@
 module.exports = {
   botName: 'Elbi',
-  dialogNames: {
-    login: 'login',
-    help: 'help',
-    orders: 'orders',
-  },
-  dialogLabels: {
-    Help: 'Help',
-    Orders: 'Orders',
+  dialogs: {
+    login: {
+      id: 'login',
+    },
+    help: {
+      id: 'help',
+      label: 'Help',
+      pattern: 'Utilities.Help',
+    },
+    orders: {
+      id: 'orders',
+      label: 'Orders',
+      pattern: 'GetOrders',
+      entities: {
+        number: 'Orders.Number',
+        open: 'Orders.Open',
+        failed: 'Orders.Failed',
+      },
+    },
   },
 };
