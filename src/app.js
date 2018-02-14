@@ -4,7 +4,7 @@ require('dotenv').config();
 const restify = require('restify');
 const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
-const constants = require('./utils/constants');
+const { dialogNames, dialogLabels, botName } = require('./utils/constants');
 
 // Setup Azure Cosmos DB database connection
 const documentDbOptions = {
@@ -32,52 +32,48 @@ const connector = new builder.ChatConnector({
 // Listen for messages from users
 server.post('/api/messages', connector.listen());
 
-const DialogLabels = {
-  Orders: 'Orders',
-	Help: 'Help'
-};
-
 const rootDialogs = [
-	(session, args, next) => {
-		if (session.conversationData.didGreet === undefined || session.conversationData.didGreet === false) {
-			// session.userData is volatile, it will be cleared at the end of the conversation
-			// hence, the bot will say hello at the start of every conversation
-			session.send(`Hello, I\'m ${constants.botName}.`);
-			session.conversationData.didGreet = true;
-		}
-		next();
-	},
-	(session, args, next) => {
-		if (session.userData.apiKey === undefined) {
-		    session.beginDialog(constants.dialogNames.login);
-		}
-		next();
-	},
+  (session, args, next) => {
+    if (!session.conversationData.didGreet) {
+      // session.userData is volatile, it will be cleared at the end of the conversation
+      // hence, the bot will say hello at the start of every conversation
+      session.send(`Hello, I'm ${botName}.`);
+      session.conversationData.didGreet = true;
+    }
+    next();
+  },
+  (session, args, next) => {
+    if (!session.userData.apiKey) {
+      session.beginDialog(dialogNames.login);
+    }
+    next();
+  },
   (session) => {
     builder.Prompts.choice(
       session,
       'How can I help you today?',
-      [DialogLabels.Orders, DialogLabels.Help],
+      [dialogLabels.Orders, dialogLabels.Help],
       {
         maxRetries: 3,
         retryPrompt: 'Not a valid option',
-      }
-	);
+      },
+    );
   },
   (session, result) => {
     if (!result.response) {
-      // exhausted attemps and no selection, start over
-      session.send('Oops! Too many attemps. But don\'t worry, you can try again!');
+      // exhausted attempts and no selection, start over
+      session.send("Oops! Too many attempts. But don't worry, you can try again!");
       return session.endDialog();
     }
 
     // continue on proper dialog
     const selection = result.response.entity;
     switch (selection) {
-      case DialogLabels.Orders:
-        return session.beginDialog(constants.dialogNames.orders);
-      case DialogLabels.Help:
-        return session.beginDialog(constants.dialogNames.help);
+      case dialogLabels.Orders:
+        return session.beginDialog(dialogNames.orders);
+      case dialogLabels.Help:
+      default:
+        return session.beginDialog(dialogNames.help);
     }
   },
 ];
@@ -85,19 +81,19 @@ const rootDialogs = [
 const bot = new builder.UniversalBot(connector, rootDialogs)
   .set('storage', cosmosStorage);
 
-bot.dialog(constants.dialogNames.orders, require('./dialogs/orders'));
-bot.dialog(constants.dialogNames.login, require('./dialogs/login'));
-bot.dialog(constants.dialogNames.help, require('./dialogs/help'))
-	.triggerAction({
-	    matches: [/help/i, /support/i, /problem/i],
-	    onSelectAction: (session, args, next) => {
-	        // Add the help dialog to the top of the dialog stack 
-	        // (override the default behavior of replacing the stack)
-	        session.beginDialog(args.action, args);
-	    }
-	});
+bot.dialog(dialogNames.orders, require('./dialogs/orders'));
+bot.dialog(dialogNames.login, require('./dialogs/login'));
+bot.dialog(dialogNames.help, require('./dialogs/help'))
+  .triggerAction({
+    matches: [/help/i, /support/i, /problem/i],
+    onSelectAction: (session, args) => {
+      // Add the help dialog to the top of the dialog stack
+      // (override the default behavior of replacing the stack)
+      session.beginDialog(args.action, args);
+    },
+  });
 
 // log any bot errors into the console
 bot.on('error', (e) => {
-  console.error('And error ocurred', e);
+  console.error('An error occurred', e);
 });
