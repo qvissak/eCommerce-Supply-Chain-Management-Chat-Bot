@@ -1,5 +1,4 @@
 const builder = require('botbuilder');
-const logicbrokerService = require('../utils/logicbroker-service');
 
 module.exports = [
   // API key retrieval
@@ -11,17 +10,17 @@ module.exports = [
   // API key validation
   (session) => {
     const key = session.dialogData.logicbrokerAPIKey;
-    session.send(`We are verifying your key...`);
-    session.send(`Thank you, Logicbroker Merchant! We have successfully verified your account.`)
+    session.send(`We are verifying your key... ${key}`);
+    session.send('Thank you, Logicbroker Merchant! We have successfully verified your account.');
 
     builder.Prompts.choice(
       session,
       'What would you like to do?',
-      ['See latest orders', 'Get open orders', 'See latest shipments']
-  );
+      ['See latest orders', 'Get open orders', 'See latest shipments'],
+    );
   },
-  (session, results, next) => {
-      //Pretend get open orders
-      session.send('Order number: 69696969\n Order date: 01/29/2018 03:56 PM');
-  }
+  (session) => {
+    // Pretend get open orders
+    session.send('Order number: 69696969\n Order date: 01/29/2018 03:56 PM');
+  },
 ];

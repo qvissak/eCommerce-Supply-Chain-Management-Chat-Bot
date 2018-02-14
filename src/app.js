@@ -34,29 +34,23 @@ const connector = new builder.ChatConnector({
 // Listen for messages from users
 server.post('/api/messages', connector.listen());
 
-//Create your bot with a function to receive messages from the user
-const bot = new builder.UniversalBot(connector, function (session, args) {
+// Create your bot with a function to receive messages from the user
+const bot = new builder.UniversalBot(connector, (session) => {
   session.send('You reached the default message handler. You said \'%s\'.', session.message.text);
 })
   .set('storage', cosmosStorage);
 
-//LUIS fields
-var luisAppId = process.env.LuisAppId;
-var luisAPIKey = process.env.LuisAPIKey;
-var luisAPIHostName = process.env.LuisAPIHostName || 'westus.api.cognitive.microsoft.com';
+// LUIS fields
+const luisAppId = process.env.LuisAppId;
+const luisAPIKey = process.env.LuisAPIKey;
+const luisAPIHostName = process.env.LuisAPIHostName || 'westus.api.cognitive.microsoft.com';
 
-console.log(`AppId: ${luisAppId}`);
-console.log(`APIKey: ${luisAPIKey}`);
-console.log(`HostName: ${luisAPIHostName}`);
+const LuisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/${luisAppId}?subscription-key=${luisAPIKey}`;
 
-const LuisModelUrl = 'https://' + luisAPIHostName + '/luis/v2.0/apps/' + luisAppId + '?subscription-key=' + luisAPIKey;
-
-console.log(`ModelURL: ${LuisModelUrl}`);
-
-//Main dialog with LUIS
-//Create a recognizer that gets intents from LUIS
-var recognizer = new builder.LuisRecognizer(LuisModelUrl);
-//Add the recognizer to the bot
+// Main dialog with LUIS
+// Create a recognizer that gets intents from LUIS
+const recognizer = new builder.LuisRecognizer(LuisModelUrl);
+// Add the recognizer to the bot
 bot.recognizer(recognizer);
 
 function shouldRespond(session) {
@@ -69,14 +63,13 @@ function shouldRespond(session) {
 }
 
 bot.dialog('getOrders', dialogOrders).triggerAction({
-    matches: 'GetOrders'
-  })
+  matches: 'GetOrders',
+});
 
 bot.dialog('login', authentication);
 bot.dialog('help', dialogHelp)
   .triggerAction({
-    //matches: [/help/i, /support/i, /problem/i],
-    matches: 'Utilities.Help'
+    matches: 'Utilities.Help',
   });
 // log any bot errors into the console
 bot.on('error', (e) => {
