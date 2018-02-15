@@ -2,7 +2,9 @@ const Promise = require('bluebird');
 const _ = require('lodash');
 const api = require('./api');
 
-const filterStatuses = (documentType, statusDescription) => new Promise(async (resolve) => {
+const { getStatuses } = api;
+
+const filterStatuses = (documentType, statusDescription) => new Promise(async (resolve, reject) => {
   try {
     const statuses = (await api.getStatuses()).DocumentTypeStatuses;
     const obj = _.find(statuses, e =>
@@ -15,4 +17,5 @@ const filterStatuses = (documentType, statusDescription) => new Promise(async (r
 
 module.exports = {
   filterStatuses,
+  getStatuses,
 };
