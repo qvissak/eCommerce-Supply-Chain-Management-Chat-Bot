@@ -1,6 +1,9 @@
 // This loads the environment variables from the .env file
 require('dotenv').config();
 
+// Initialize Bot Middleware
+const { botbuilder } = require('../middleware/setChannelContext');
+
 const restify = require('restify');
 const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
@@ -58,6 +61,7 @@ const rootDialogs = [
 
 // Create your bot with a function to receive messages from the user
 const bot = new builder.UniversalBot(connector, rootDialogs)
+  .use({ botbuilder })
   .set('storage', cosmosStorage);
 
 // Setup LUIS
@@ -68,6 +72,7 @@ const LuisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/${luisAppId}?sub
 
 // Main dialog with LUIS - create a recognizer that gets intents from LUIS
 const recognizer = new builder.LuisRecognizer(LuisModelUrl);
+
 // Add the recognizer to the bot
 bot.recognizer(recognizer);
 
