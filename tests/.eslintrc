@@ -1,0 +1,19 @@
+{
+  "extends": "../.eslintrc",
+  "plugins": [
+    "mocha"
+  ],
+  "rules": {
+    "mocha/no-exclusive-tests": "error",
+    "prefer-arrow-callback": "off",
+    "func-names": "off",
+    "space-before-function-paren": "off",
+    "no-unused-expressions": "off"
+  },
+  "globals": {
+    "describe": true,
+    "it": true,
+    "expect": true,
+    "assert": true
+  }
+}
