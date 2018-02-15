@@ -10,7 +10,7 @@ const reqPromise = (uri, method, qsp = {}, body = undefined) => {
     qs += `${sep}${param}=${queryParams[param]}`;
   });
   const opts = {
-    uri: `https://stage.commerceapi.io/api/${uri}${qs}`,
+    uri: `https://stage.commerceapi.io/api${uri}${qs}`,
     method,
     json: true,
   };

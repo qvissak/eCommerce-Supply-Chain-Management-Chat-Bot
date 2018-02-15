@@ -4,9 +4,10 @@ require('dotenv').config();
 const restify = require('restify');
 const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
-const authentication = require('./dialogs/authentication');
-const dialogHelp = require('./dialogs/help');
-const dialogOrders = require('./dialogs/orders');
+const { botName, dialogs: { login, help, orders } } = require('./utils/constants');
+const orderDialog = require('./dialogs/orders');
+const loginDialog = require('./dialogs/login');
+const helpDialog = require('./dialogs/help');
 
 // Setup Azure Cosmos DB database connection
 const documentDbOptions = {
@@ -34,44 +35,47 @@ const connector = new builder.ChatConnector({
 // Listen for messages from users
 server.post('/api/messages', connector.listen());
 
+const rootDialogs = [
+  (session, args, next) => {
+    if (!session.conversationData.didGreet) {
+      // session.userData is volatile, it will be cleared at the end of the conversation
+      // hence, the bot will say hello at the start of every conversation
+      session.send(`Hello, I'm ${botName}.`);
+      session.conversationData.didGreet = true;
+    }
+    next();
+  },
+  (session, args, next) => {
+    if (!session.userData.apiKey) {
+      session.beginDialog(login.id);
+    }
+    next();
+  },
+  (session) => {
+    session.send('How can I help you today?');
+  },
+];
+
 // Create your bot with a function to receive messages from the user
-const bot = new builder.UniversalBot(connector, (session) => {
-  session.send('You reached the default message handler. You said \'%s\'.', session.message.text);
-})
+const bot = new builder.UniversalBot(connector, rootDialogs)
   .set('storage', cosmosStorage);
 
-// LUIS fields
+// Setup LUIS
 const luisAppId = process.env.LuisAppId;
 const luisAPIKey = process.env.LuisAPIKey;
 const luisAPIHostName = process.env.LuisAPIHostName || 'westus.api.cognitive.microsoft.com';
-
 const LuisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/${luisAppId}?subscription-key=${luisAPIKey}`;
 
-// Main dialog with LUIS
-// Create a recognizer that gets intents from LUIS
+// Main dialog with LUIS - create a recognizer that gets intents from LUIS
 const recognizer = new builder.LuisRecognizer(LuisModelUrl);
 // Add the recognizer to the bot
 bot.recognizer(recognizer);
 
-function shouldRespond(session) {
-  const testing = process.env.BOT_TESTING === 'True';
-  if (testing || session.message.address.channelId === 'slack') {
-    const { isGroup } = session.message.address.conversation;
-    return !isGroup || (isGroup && session.message.text.includes(process.env.SLACK_HANDLE));
-  }
-  return false;
-}
+bot.dialog(orders.id, orderDialog).triggerAction({ matches: orders.pattern });
+bot.dialog(login.id, loginDialog);
+bot.dialog(help.id, helpDialog).triggerAction({ matches: help.pattern });
 
-bot.dialog('getOrders', dialogOrders).triggerAction({
-  matches: 'GetOrders',
-});
-
-bot.dialog('login', authentication);
-bot.dialog('help', dialogHelp)
-  .triggerAction({
-    matches: 'Utilities.Help',
-  });
 // log any bot errors into the console
 bot.on('error', (e) => {
-  console.error('And error ocurred', e);
+  console.error('An error occurred', e);
 });

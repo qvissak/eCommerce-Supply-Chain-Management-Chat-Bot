@@ -1,12 +1,14 @@
 const builder = require('botbuilder');
+const { dialogs: { orders: { entities } } } = require('../utils/constants');
+
+const { number: orderNum, open: openOrder, failed: failedOrder } = entities;
 
 module.exports = [
   (session, args) => {
-    // Resolve and store any Orders.Number entity passed from LUIS.
     const { intent } = args;
-    const orderNumber = builder.EntityRecognizer.findEntity(intent.entities, 'Orders.Number');
-    const openOrders = builder.EntityRecognizer.findEntity(intent.entities, 'Orders.Open');
-    const failedOrders = builder.EntityRecognizer.findEntity(intent.entities, 'Orders.Failed');
+    const orderNumber = builder.EntityRecognizer.findEntity(intent.entities, orderNum);
+    const openOrders = builder.EntityRecognizer.findEntity(intent.entities, openOrder);
+    const failedOrders = builder.EntityRecognizer.findEntity(intent.entities, failedOrder);
 
     if (orderNumber) {
       session.send('Ok, retrieving info for order number %s.', orderNumber.entity);
