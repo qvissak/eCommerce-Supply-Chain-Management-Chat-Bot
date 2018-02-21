@@ -7,7 +7,9 @@ const reqPromise = (uri, method, qsp = {}, body = undefined) => {
   let qs = '';
   Object.keys(queryParams).forEach((param, index) => {
     const sep = index === 0 ? '?' : '&';
-    qs += `${sep}${param}=${queryParams[param]}`;
+    if(queryParams[param]){
+      qs += `${sep}${param}=${queryParams[param]}`;
+    }
   });
   const opts = {
     uri: `https://stage.commerceapi.io/api${uri}${qs}`,
