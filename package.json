@@ -27,6 +27,7 @@
     "botbuilder-azure": "3.0.4",
     "dotenv": "5.0.0",
     "lodash": "4.17.4",
+    "moment": "2.20.1",
     "request": "2.83.0",
     "request-promise": "4.2.2",
     "restify": "6.3.4"
