@@ -6,9 +6,12 @@ const orderAPIHelper = require('./helpers/orders');
 module.exports = [
   async (session, args) => {
     try {
-      const orders = (await ordersAPI.getOrders()).Records;
+      const tmp = await ordersAPI.getOrders();
+      const orders = tmp.Records;
+      const totalNumOrders = tmp.TotalRecords;
       session.userData.orders = orders;
-      console.log(`Retrieved all orders. Number of orders is ${orders.length}`);
+      session.userData.totalNumOrders = totalNumOrders;
+      console.log(`Retrieved all orders. Number of orders is ${totalNumOrders}`);
       const { intent } = args;
       const orderNumber = builder.EntityRecognizer.findEntity(intent.entities, entities.orderNumber);
       const openOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.openOrder);
