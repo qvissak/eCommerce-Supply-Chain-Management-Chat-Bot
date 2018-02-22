@@ -1,25 +1,63 @@
 const builder = require('botbuilder');
-const { dialogs: { orders: { entities } } } = require('../utils/constants');
-
-const { number: orderNum, open: openOrder, failed: failedOrder } = entities;
+const { entities, statusStr2Int } = require('../utils/constants');
+const ordersAPI = require('../apis/order/index');
+const orderAPIHelper = require('./helpers/orders');
 
 module.exports = [
-  (session, args) => {
-    const { intent } = args;
-    const orderNumber = builder.EntityRecognizer.findEntity(intent.entities, orderNum);
-    const openOrders = builder.EntityRecognizer.findEntity(intent.entities, openOrder);
-    const failedOrders = builder.EntityRecognizer.findEntity(intent.entities, failedOrder);
+  async (session, args) => {
+    try {
+      const tmp = await ordersAPI.getOrders();
+      const orders = tmp.Records;
+      const totalNumOrders = tmp.TotalRecords;
+      session.userData.orders = orders;
+      session.userData.totalNumOrders = totalNumOrders;
+      console.log(`Retrieved all orders. Number of orders is ${totalNumOrders}`);
+      const { intent } = args;
+      const orderNumber = builder.EntityRecognizer.findEntity(intent.entities, entities.orderNumber);
+      const openOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.openOrder);
+      const failedOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.failedOrder);
+      const cancelledOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.canceledOrder);
 
-    if (orderNumber) {
-      session.send('Ok, retrieving info for order number %s.', orderNumber.entity);
-      // Code to retrieve info
-    } else if (openOrders) {
-      session.send('Ok, retrieving open orders');
-    } else if (failedOrders) {
-      session.send('Ok, retrieving failed orders');
-    } else {
-      session.send('Oops... I failed.');
+      if (orderNumber) {
+        session.send(`Ok, retrieving info for order number ${orderNumber.entity}.`);
+        const o = orderAPIHelper.getOrderByNumber(orders, orderNumber.entity);
+        if (o) {
+          session.send('Order found. Check the console log.');
+          console.log(`Order found, result is\n${JSON.stringify(o)}`);
+        } else {
+          session.send(`Order ${orderNumber.entity} not found.`);
+        }
+      } else if (openOrders) {
+        const open = orderAPIHelper.getOpenOrders(orders);
+        if (open && open.length > 0) {
+          session.send(`Found ${open.length} open order${open.length === 1 ? '.' : 's.'}`);
+          for (const o of open) {
+            session.send(`Order ${o.OrderNumber}`);
+          }
+        } else {
+          session.send('No open orders.');
+        }
+      } else if (failedOrders) {
+        session.send('Ok, retrieving failed orders');
+      } else if (cancelledOrders) {
+        session.send('Ok, retrieving cancelled orders.');
+        const cancelled = orderAPIHelper.getOrdersByStatus(orders, statusStr2Int.Cancelled);
+        if (cancelled && cancelled.length > 0) {
+          session.send(`Found ${cancelled.length} cancelled order${cancelled.length === 1 ? '.' : 's.'}`);
+          for (const o of cancelled) {
+            session.send(`Order ${o.OrderNumber}`);
+          }
+        } else {
+          session.send('No cancelled orders.');
+        }
+      } else {
+        session.send('Oops... I failed.');
+      }
+      session.endDialog();
+    } catch (e) {
+      console.error(e.message);
+      session.send('Error!');
+      session.endDialog();
     }
-    session.endDialog();
   },
 ];

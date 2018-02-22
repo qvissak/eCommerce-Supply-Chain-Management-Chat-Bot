@@ -11,6 +11,23 @@ const getOrderByNumber = (records, orderNumber) =>
   _.find(records, o => o.OrderNumber === orderNumber);
 
 /**
+ * Filter all orders response by status code
+ * @param {Object[]} records
+ * @param number statusCode
+ * @returns {Object[]} objects which have the given status code
+ */
+const getOrdersByStatus = (records, statusCode) =>
+  _.filter(records, { StatusCode: statusCode });
+
+/**
+ * Get all orders with status code less than 1000
+ * @param {Object[]} records
+ * @returns {Object[]} objects which have the given status code
+ */
+const getOpenOrders = (records) =>
+  _.filter(records, (o) => o.StatusCode < 1000);
+
+/**
  * Maps orders response to object of identifiers
  * @param {Object[]} records
  * @returns {Object[]} list of identifier objects
@@ -43,6 +60,8 @@ const getMenuData = (records, statuses) => records.map(record => ({
 
 module.exports = {
   getOrderByNumber,
+  getOrdersByStatus,
+  getOpenOrders,
   getIdentifiers,
   getMenuData,
   getStatusByCode,
