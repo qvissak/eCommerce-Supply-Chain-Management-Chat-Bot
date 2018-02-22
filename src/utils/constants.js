@@ -7,18 +7,19 @@ module.exports = {
     help: {
       id: 'help',
       label: 'Help',
-      pattern: 'Utilities.Help',
+      intent: 'Utilities.Help',
     },
     orders: {
       id: 'orders',
       label: 'Orders',
-      pattern: 'GetOrders',
-      entities: {
-        number: 'Orders.Number',
-        open: 'Orders.Status::Open',
-        failed: 'Orders.Status::Failed',
-      },
+      intent: 'GetOrders',
     },
+  },
+  entities: {
+    orderNumber: 'Orders.Number',
+    openOrder: 'Orders.Status::Open',
+    failedOrder: 'Orders.Status::Failed',
+    canceledOrder: 'Orders.Status::Cancelled',
   },
   statusStr2Int: {
     /* Omitted draft (code -1) */
