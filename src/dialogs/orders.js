@@ -42,7 +42,6 @@ module.exports = [
         if (cancelled && cancelled.length > 0) {
           session.send(`Found ${cancelled.length} cancelled order${cancelled.length === 1 ? '.' : 's.'}`);
           for (const o of cancelled) {
-            console.log(JSON.stringify(o));
             session.send(`Order ${o.OrderNumber}`);
           }
         } else {
