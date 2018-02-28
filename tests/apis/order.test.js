@@ -16,13 +16,13 @@ describe('Order Endpoints - LogicBroker API Service', function() {
         });
     });
     it('status parameter set to Ignored should return only Ignored orders ', function() {
-      return ordersApi.getOrders('Ignored')
+      return ordersApi.getOrders(null, 'Ignored')
         .then((data) => {
           orderResHelper(data);
         });
     });
     it('status parameter set to Cancelled should return only Cancelled orders ', function() {
-      return ordersApi.getOrders('Cancelled')
+      return ordersApi.getOrders(null, 'Cancelled')
         .then((data) => {
           orderResHelper(data);
         });
