@@ -8,9 +8,7 @@ const restify = require('restify');
 const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
 const { botName, dialogs: { login, help, orders } } = require('./utils/constants');
-const orderDialog = require('./dialogs/orders');
-const loginDialog = require('./dialogs/login');
-const helpDialog = require('./dialogs/help');
+const dialog = require('./dialogs/dialogStore')
 
 // Setup Azure Cosmos DB database connection
 const documentDbOptions = {
@@ -38,51 +36,31 @@ const connector = new builder.ChatConnector({
 // Listen for messages from users
 server.post('/api/messages', connector.listen());
 
-const rootDialogs = [
-  (session, args, next) => {
-    if (!session.conversationData.didGreet) {
-      // session.conversationData is volatile, it will be cleared at the end of the conversation
-      // hence, the bot will say hello at the start of every conversation
-      session.send(`Hello, I'm ${botName}.`);
-      session.conversationData.didGreet = true;
-    }
-    next();
-  },
-  (session, args, next) => {
-    if (!session.userData.apiKey) {
-      session.beginDialog(login.id);
-    }
-    next();
-  },
-  (session) => {
-    session.send('How can I help you today?');
-  },
-];
-
 // Create your bot with a function to receive messages from the user
-const bot = new builder.UniversalBot(connector, rootDialogs)
+// Initialize conversation from rootDialogs
+const bot = new builder.UniversalBot(connector, dialog.hello.rootDialogs)
   .use({ botbuilder })
   .set('storage', cosmosStorage);
 
-// Setup LUIS
-const luisAppId = process.env.LuisAppId;
-const luisAPIKey = process.env.LuisAPIKey;
-const bingSpellcheck = process.env.BingSpellchecker;
+// Setup LUIS and Bing spell check
+const luisAppId = process.env.LUIS_APP_ID;
+const luisAPIKey = process.env.LUIS_API_KEY;
+const bingSpellcheck = process.env.BING_SPELL_CHECK;
 const spellCheck = process.env.SPELLCHECK;
-const luisAPIHostName = process.env.LuisAPIHostName || 'westus.api.cognitive.microsoft.com';
-const LuisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/` +
-`${luisAppId}?subscription-key=${luisAPIKey}&spellCheck=${spellCheck}` +
-`&bing-spell-check-subscription-key=${bingSpellcheck}&verbose=true`;
+const luisAPIHostName = process.env.LUIS_API_HOST_NAME;
+const luisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/` +
+  `${luisAppId}?subscription-key=${luisAPIKey}&spellCheck=${spellCheck}` +
+  `&bing-spell-check-subscription-key=${bingSpellcheck}&verbose=true`;
 
 // Main dialog with LUIS - create a recognizer that gets intents from LUIS
-const recognizer = new builder.LuisRecognizer(LuisModelUrl);
+const recognizer = new builder.LuisRecognizer(luisModelUrl);
 
 // Add the recognizer to the bot
 bot.recognizer(recognizer);
 
-bot.dialog(orders.id, orderDialog).triggerAction({ matches: orders.intent });
-bot.dialog(login.id, loginDialog);
-bot.dialog(help.id, helpDialog).triggerAction({ matches: help.intent });
+bot.dialog(orders.id, dialog.order).triggerAction({ matches: orders.intent });
+bot.dialog(login.id, dialog.login);
+bot.dialog(help.id, dialog.help).triggerAction({ matches: help.intent });
 
 // log any bot errors into the console
 bot.on('error', (e) => {
