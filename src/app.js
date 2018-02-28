@@ -67,8 +67,12 @@ const bot = new builder.UniversalBot(connector, rootDialogs)
 // Setup LUIS
 const luisAppId = process.env.LuisAppId;
 const luisAPIKey = process.env.LuisAPIKey;
+const bingSpellcheck = process.env.BingSpellchecker;
+const spellCheck = process.env.SPELLCHECK;
 const luisAPIHostName = process.env.LuisAPIHostName || 'westus.api.cognitive.microsoft.com';
-const LuisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/${luisAppId}?subscription-key=${luisAPIKey}`;
+const LuisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/` +
+`${luisAppId}?subscription-key=${luisAPIKey}&spellCheck=${spellCheck}` +
+`&bing-spell-check-subscription-key=${bingSpellcheck}&verbose=true`;
 
 // Main dialog with LUIS - create a recognizer that gets intents from LUIS
 const recognizer = new builder.LuisRecognizer(LuisModelUrl);
