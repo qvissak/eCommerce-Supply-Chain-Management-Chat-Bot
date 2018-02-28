@@ -24,8 +24,8 @@ const getOrdersByStatus = (records, statusCode) =>
  * @param {Object[]} records
  * @returns {Object[]} objects which have the given status code
  */
-const getOpenOrders = (records) =>
-  _.filter(records, (o) => o.StatusCode < 1000);
+const getOpenOrders = records =>
+  _.filter(records, o => o.StatusCode < 1000);
 
 /**
  * Maps orders response to object of identifiers
