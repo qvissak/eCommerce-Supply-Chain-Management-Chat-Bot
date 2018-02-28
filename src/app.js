@@ -41,7 +41,7 @@ server.post('/api/messages', connector.listen());
 const rootDialogs = [
   (session, args, next) => {
     if (!session.conversationData.didGreet) {
-      // session.userData is volatile, it will be cleared at the end of the conversation
+      // session.conversationData is volatile, it will be cleared at the end of the conversation
       // hence, the bot will say hello at the start of every conversation
       session.send(`Hello, I'm ${botName}.`);
       session.conversationData.didGreet = true;
@@ -76,9 +76,9 @@ const recognizer = new builder.LuisRecognizer(LuisModelUrl);
 // Add the recognizer to the bot
 bot.recognizer(recognizer);
 
-bot.dialog(orders.id, orderDialog).triggerAction({ matches: orders.pattern });
+bot.dialog(orders.id, orderDialog).triggerAction({ matches: orders.intent });
 bot.dialog(login.id, loginDialog);
-bot.dialog(help.id, helpDialog).triggerAction({ matches: help.pattern });
+bot.dialog(help.id, helpDialog).triggerAction({ matches: help.intent });
 
 // log any bot errors into the console
 bot.on('error', (e) => {
