@@ -26,7 +26,13 @@ cd LogicBrokerBot/
 npm install
 ```
 
-## Deployment
+### Deployment
+Set up environment variables. Contact a member of the team to get the correct keys.
+```
+cp .env.example .env
+```
+
+Launch the application server. Connect to the bot framework emulator as a client to query the server.
 ```
 npm start
 ```
