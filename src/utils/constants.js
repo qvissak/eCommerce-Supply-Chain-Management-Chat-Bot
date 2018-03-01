@@ -19,7 +19,12 @@ module.exports = {
     orderNumber: 'Orders.Number',
     openOrder: 'Orders.Status::Open',
     failedOrder: 'Orders.Status::Failed',
-    canceledOrder: 'Orders.Status::Cancelled',
+    cancelledOrder: 'Orders.Status::Cancelled',
+    completedOrder: 'Orders.Status::Complete',
+    r2AckOrder: 'Orders.Status::R2Ack',
+    r2InvoiceOrder: 'Orders.Status::R2Invoice',
+    r2ShipOrder: 'Orders.Status::R2Ship',
+    dateTime: 'builtin.datetimeV2',
   },
   statusStr2Int: {
     /* Omitted draft (code -1) */
@@ -40,7 +45,8 @@ module.exports = {
     100: 'Submitted',
     150: 'Ready to Acknowledge',
     200: 'Processing',
-    600: 'Ready to Ship',
+    500: 'Ready to Ship',
+    600: 'Ready to Invoice',
     1000: 'Complete',
     1100: 'Cancelled',
     1200: 'Failed',
