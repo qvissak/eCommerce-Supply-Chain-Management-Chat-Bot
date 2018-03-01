@@ -59,7 +59,13 @@ module.exports = [
       const orderNumber = builder.EntityRecognizer.findEntity(intent.entities, entities.orderNumber);
       const openOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.openOrder);
       const failedOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.failedOrder);
-      const cancelledOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.canceledOrder);
+      const cancelledOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.cancelledOrder);
+      const completedOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.completedOrder);
+      const r2AckOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.r2AckOrder);
+      const r2InvoiceOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.r2InvoiceOrder);
+      const r2ShipOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.r2ShipOrder);
+      const dateTime = builder.EntityRecognizer.findEntity(intent.entities, entities.dateTime);
+
 
       // Response provided with an order number
       if (orderNumber)
@@ -73,6 +79,18 @@ module.exports = [
       // Response to show cancelled orders
       else if (cancelledOrders)
         displayOrdersByStatus(session, orders, statusStr2Int.Cancelled);
+      // Response to show completed orders
+      else if (completedOrders)
+        displayOrdersByStatus(session, orders, statusStr2Int.Complete);
+      // Response to show ready to ack orders
+      else if (r2AckOrders)
+        displayOrdersByStatus(session, orders, statusStr2Int['Ready to Acknowledge']);
+      // Response to show ready to invoice orders
+      else if (r2InvoiceOrders)
+        displayOrdersByStatus(session, orders, statusStr2Int['Ready to Invoice']);
+      // Response to show ready to ship orders
+      else if (r2ShipOrders)
+        displayOrdersByStatus(session, orders, statusStr2Int['Ready to Ship']);
       // Default response
       else
         session.send('Oops... I failed.');
