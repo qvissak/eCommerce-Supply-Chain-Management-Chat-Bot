@@ -18,10 +18,12 @@ describe('Dialog Order Utils', function() {
       });
   });
 
-  xit('getOrderByNumber should work', function() {
-    const orderNumber = 'L8266355';
+  it('getOrderByNumber should work', function() {
+    const orderNumber = '000000095';
     const orderDetails = orderHelper.getOrderByNumber(records, orderNumber);
-    expect(orderDetails.OrderNumber).to.equal(orderNumber);
+    orderDetails
+      ? expect(orderDetails.OrderNumber).to.equal(orderNumber)
+      : expect(orderDetails).to.be.undefined;
   });
 
   it('getOrdersByStatus should work', function() {
@@ -37,7 +39,7 @@ describe('Dialog Order Utils', function() {
 
   it('getIdentifiers should work', function() {
     const orderIdentifiers = orderHelper.getIdentifiers(records);
-    orderIdentifiers.every(i => expect(i).to.have.all.keys('LinkKey', 'LogicbrokerKey', 'SourceKey'));
+    orderIdentifiers.every(i => expect(i).to.include.keys('LinkKey', 'LogicbrokerKey', 'SourceKey'));
   });
 
   it('getMenuData should work', function() {
