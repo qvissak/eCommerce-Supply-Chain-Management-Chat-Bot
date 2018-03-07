@@ -57,40 +57,39 @@ module.exports = [
       // Capture intent from user
       const { intent } = args;
       const orderNumber = builder.EntityRecognizer.findEntity(intent.entities, entities.orderNumber);
-      const openOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.openOrder);
-      const failedOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.failedOrder);
-      const cancelledOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.cancelledOrder);
-      const completedOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.completedOrder);
-      const r2AckOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.r2AckOrder);
-      const r2InvoiceOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.r2InvoiceOrder);
-      const r2ShipOrders = builder.EntityRecognizer.findEntity(intent.entities, entities.r2ShipOrder);
+      const open = builder.EntityRecognizer.findEntity(intent.entities, entities.openOrder);
+      const failed = builder.EntityRecognizer.findEntity(intent.entities, entities.failedOrder);
+      const cancelled = builder.EntityRecognizer.findEntity(intent.entities, entities.cancelledOrder);
+      const completed = builder.EntityRecognizer.findEntity(intent.entities, entities.completedOrder);
+      const r2Ack = builder.EntityRecognizer.findEntity(intent.entities, entities.r2AckOrder);
+      const r2Invoice = builder.EntityRecognizer.findEntity(intent.entities, entities.r2InvoiceOrder);
+      const r2Ship = builder.EntityRecognizer.findEntity(intent.entities, entities.r2ShipOrder);
       const dateTime = builder.EntityRecognizer.findEntity(intent.entities, entities.dateTime);
-
 
       // Response provided with an order number
       if (orderNumber)
         displayOrderByNumber(session, orders, orderNumber.entity);
       // Response to show open orders
-      else if (openOrders)
+      else if (open)
         displayOpenOrders(session, orders);
       // Response to show failed orders
-      else if (failedOrders)
+      else if (failed)
         displayOrdersByStatus(session, orders, statusStr2Int.Failed);
       // Response to show cancelled orders
-      else if (cancelledOrders)
+      else if (cancelled)
         displayOrdersByStatus(session, orders, statusStr2Int.Cancelled);
       // Response to show completed orders
-      else if (completedOrders)
+      else if (completed)
         displayOrdersByStatus(session, orders, statusStr2Int.Complete);
       // Response to show ready to ack orders
-      else if (r2AckOrders)
-        displayOrdersByStatus(session, orders, statusStr2Int['Ready to Acknowledge']);
+      else if (r2Ack)
+        displayOrdersByStatus(session, orders, statusStr2Int.R2Ack);
       // Response to show ready to invoice orders
-      else if (r2InvoiceOrders)
-        displayOrdersByStatus(session, orders, statusStr2Int['Ready to Invoice']);
+      else if (r2Invoice)
+        displayOrdersByStatus(session, orders, statusStr2Int.R2Invoice);
       // Response to show ready to ship orders
-      else if (r2ShipOrders)
-        displayOrdersByStatus(session, orders, statusStr2Int['Ready to Ship']);
+      else if (r2Ship)
+        displayOrdersByStatus(session, orders, statusStr2Int.R2Ship);
       // Default response
       else
         session.send('Oops... I failed.');

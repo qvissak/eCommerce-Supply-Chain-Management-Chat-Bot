@@ -7,7 +7,7 @@ const { botbuilder } = require('../middleware/setChannelContext');
 const restify = require('restify');
 const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
-const { botName, dialogs: { login, help, orders } } = require('./utils/constants');
+const { botName, dialogs } = require('./utils/constants');
 const dialog = require('./dialogs/dialogStore')
 
 // Setup Azure Cosmos DB database connection
@@ -58,9 +58,10 @@ const recognizer = new builder.LuisRecognizer(luisModelUrl);
 // Add the recognizer to the bot
 bot.recognizer(recognizer);
 
-bot.dialog(orders.id, dialog.order).triggerAction({ matches: orders.intent });
-bot.dialog(login.id, dialog.login);
-bot.dialog(help.id, dialog.help).triggerAction({ matches: help.intent });
+bot.dialog(dialogs.orders.id, dialog.order).triggerAction({ matches: dialogs.orders.intent });
+bot.dialog(dialogs.updateOrderStatus.id, dialog.updateOrderStatus).triggerAction({ matches: dialogs.updateOrderStatus.intent });
+bot.dialog(dialogs.login.id, dialog.login);
+bot.dialog(dialogs.help.id, dialog.help).triggerAction({ matches: dialogs.help.intent });
 
 // log any bot errors into the console
 bot.on('error', (e) => {
