@@ -1,6 +1,7 @@
 const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
 const ordersAPI = require('../apis/order/index');
+const { logger } = require('../utils/logger');
 const orderAPIHelper = require('./helpers/orders');
 const  { toDialogString } = orderAPIHelper;
 	  
@@ -44,6 +45,7 @@ module.exports = [
 
       session.endDialog();
     } catch (e) {
+      logger.error('Retrieving Orders', e);
       console.error(e.message);
       session.send('Error!');
       session.endDialog();

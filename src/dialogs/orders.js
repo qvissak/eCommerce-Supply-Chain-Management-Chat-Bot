@@ -2,6 +2,7 @@ const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
 const ordersAPI = require('../apis/order/index');
 const orderAPIHelper = require('./helpers/orders');
+const { logger } = require('../utils/logger');
 
 const displayOrderByIdentifier = (session, orders, orderNumber) => {
   session.send(`Give me one second, retrieving info for ` +
@@ -94,6 +95,7 @@ module.exports = [
 
       session.endDialog();
     } catch (e) {
+      logger.error('Retrieving Orders', e);
       console.error(e.message);
       session.send('Error!');
       session.endDialog();

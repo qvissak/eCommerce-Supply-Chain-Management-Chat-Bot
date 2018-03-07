@@ -10,6 +10,8 @@ const azure = require('botbuilder-azure');
 const { botName, dialogs } = require('./utils/constants');
 const dialog = require('./dialogs/dialogStore');
 
+const logger = require('./utils/logger');
+
 // Setup Azure Cosmos DB database connection
 const documentDbOptions = {
   host: process.env.DB_HOST,
@@ -52,6 +54,8 @@ const luisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/` +
   `${luisAppId}?subscription-key=${luisAPIKey}&spellCheck=${spellCheck}` +
   `&bing-spell-check-subscription-key=${bingSpellcheck}&verbose=true`;
 
+logger.info('Luis config', { luisAppId, luisAPIKey, luisAPIHostName, luisModelUrl });
+
 // Main dialog with LUIS - create a recognizer that gets intents from LUIS
 const recognizer = new builder.LuisRecognizer(luisModelUrl);
 
@@ -66,4 +70,5 @@ bot.dialog(dialogs.help.id, dialog.help).triggerAction({ matches: dialogs.help.i
 // log any bot errors into the console
 bot.on('error', (e) => {
   console.error('An error occurred', e);
+  logger.error('An error occurred', e);
 });
