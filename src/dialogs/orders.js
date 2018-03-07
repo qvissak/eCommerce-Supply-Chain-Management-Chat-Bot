@@ -2,6 +2,7 @@ const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
 const ordersAPI = require('../apis/order/index');
 const orderAPIHelper = require('./helpers/orders');
+const  { toDialogString } = orderAPIHelper;
 
 const displayOrderByNumber = (session, orders, orderNumber) => {
   session.send(`Give me one second, retrieving info for ` +
@@ -18,14 +19,14 @@ const displayOrderByNumber = (session, orders, orderNumber) => {
 
 const displayOrderResponse = (session, resp, statusStr) => {
   const singular = resp.length === 1;
+  const status = statusStr.toDialogString().toLowerCase();
 
   if (resp && resp.length > 0) {
-    session.send(`I found ${singular ? 'a' : 'multiple'} ` + 
-      `${resp.length} ${statusStr} order${singular ? '.' : 's.'}`);
+    session.send(`I found ` + `${resp.length} ${status} order${singular ? '.' : 's.'}`);
     for (const o of resp)
       session.send(`Order ${o.OrderNumber}`);
   } else {
-    session.send(`There are no ${statusStr} orders at this time.`);
+    session.send(`There are no ${status} orders at this time.`);
   }
 } 
 
@@ -36,7 +37,7 @@ const displayOpenOrders = (session, orders) => {
 
 const displayOrdersByStatus = (session, orders, statusInt) => {
   const resp = orderAPIHelper.getOrdersByStatus(orders, statusInt);
-  const statusStr = statusInt2Str[statusInt].toLowerCase();
+  const statusStr = statusInt2Str[statusInt];
   displayOrderResponse(session, resp, statusStr);
 }
 
@@ -51,8 +52,6 @@ module.exports = [
       // Set session data
       session.userData.orders = orders;
       session.userData.totalNumOrders = totalNumOrders;
-
-      console.log(`Retrieved all orders. Number of orders is ${totalNumOrders}`);
 
       // Capture intent from user
       const { intent } = args;
@@ -92,7 +91,7 @@ module.exports = [
         displayOrdersByStatus(session, orders, statusStr2Int.R2Ship);
       // Default response
       else
-        session.send('Oops... I failed.');
+        session.send('I was unable to determine what you need. Can you be more specific?');
 
       session.endDialog();
     } catch (e) {

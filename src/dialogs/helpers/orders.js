@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const moment = require('moment');
+const { rawStatus2DialogStatus } = require('../../utils/constants');
 
 /**
  * Filter all orders response by order number
@@ -57,6 +58,14 @@ const getMenuData = (records, statuses) => records.map(record => ({
   status: getStatusByCode(statuses, record.StatusCode),
 }));
 
+/**
+ * Get status display string for dialog
+ * @param {String} rawStatus
+ * @returns {String} status
+*/
+const toDialogString = String.prototype.toDialogString = function () {
+  return _.get(rawStatus2DialogStatus, this);
+}
 
 module.exports = {
   getOrderByNumber,
@@ -65,4 +74,5 @@ module.exports = {
   getIdentifiers,
   getMenuData,
   getStatusByCode,
+  toDialogString,
 };
