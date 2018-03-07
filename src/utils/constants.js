@@ -57,4 +57,17 @@ module.exports = {
     1200: 'Failed',
     1400: 'Ignored',
   },
+  rawStatus2DialogStatus: {
+    New: 'New',
+    Submitted: 'Submitted',
+    R2Ack: 'Ready to Acknowledge',
+    Processing: 'Processing',
+    R2Ship: 'Ready to Ship',
+    R2Invoice: 'Ready to Invoice',
+    Complete: 'Complete',
+    Cancelled: 'Cancelled',
+    Failed: 'Failed',
+    Ignored: 'Ignored',
+    Open: 'Open',
+  },
 };

@@ -2,11 +2,12 @@ const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
 const ordersAPI = require('../apis/order/index');
 const orderAPIHelper = require('./helpers/orders');
+const  { toDialogString } = orderAPIHelper;
 	  
 const displayUpdateStatus = (session, orders, orderNumber, statusEntity) => {
-  const status = statusEntity.substring(15);
+  const status = statusEntity.substring(15).toDialogString();
   session.send(`Give me one second, updating status of ` +
-    `order number ${orderNumber} to ${status}`);
+    `order number ${orderNumber} to "${status}".`);
 }
 
 module.exports = [
@@ -20,8 +21,6 @@ module.exports = [
       // Set session data
       session.userData.orders = orders;
       session.userData.totalNumOrders = totalNumOrders;
-
-      console.log(`Retrieved all orders. Number of orders is ${totalNumOrders}`);
 
       // Capture intent and entities from user
       const { intent } = args;
@@ -39,9 +38,9 @@ module.exports = [
 
       // Response provided with an order number
       if (orderNumber && status)
-		displayUpdateStatus(session, orders, orderNumber.entity, status.type);
+        displayUpdateStatus(session, orders, orderNumber.entity, status.type);
       else
-        session.send('Oops... I failed.');
+        session.send('I was unable to determine what you need. Can you be more specific?');
 
       session.endDialog();
     } catch (e) {
