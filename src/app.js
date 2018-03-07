@@ -8,7 +8,7 @@ const restify = require('restify');
 const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
 const { botName, dialogs } = require('./utils/constants');
-const dialog = require('./dialogs/dialogStore')
+const dialog = require('./dialogs/dialogStore');
 
 // Setup Azure Cosmos DB database connection
 const documentDbOptions = {
