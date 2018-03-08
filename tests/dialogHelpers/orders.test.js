@@ -18,9 +18,9 @@ describe('Dialog Order Utils', function() {
       });
   });
 
-  it('getOrderByNumber should work', function() {
+  it('getOrderByIdentifier should work', function() {
     const orderNumber = '000000095';
-    const orderDetails = orderHelper.getOrderByNumber(records, orderNumber);
+    const orderDetails = orderHelper.getOrderByIdentifier(records, orderNumber);
     orderDetails
       ? expect(orderDetails.OrderNumber).to.equal(orderNumber)
       : expect(orderDetails).to.be.undefined;

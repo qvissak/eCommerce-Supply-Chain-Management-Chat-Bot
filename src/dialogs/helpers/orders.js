@@ -3,13 +3,21 @@ const moment = require('moment');
 const { rawStatus2DialogStatus } = require('../../utils/constants');
 
 /**
- * Filter all orders response by order number
+ * Filter all orders response by order number or some identifier
  * @param {Object[]} records
- * @param {String} orderNumber
- * @returns {Object} object containing order information given order number
+ * @param {String} identifier (can be OrderNumber, SourceKey, LogicbrokerKey, or LinkKey)
+ * @returns {Object} object containing order information given order number, or null if not found
  */
-const getOrderByNumber = (records, orderNumber) =>
-  _.find(records, o => o.OrderNumber === orderNumber);
+const getOrderByIdentifier = (records, identifier) => {
+  const ident = identifier.toString().toLowerCase();
+  const foundOrder =  _.find(records, (o) => {
+    return o.OrderNumber.toString().toLowerCase() === ident ||
+    o.Identifier.SourceKey.toString().toLowerCase() === identifier ||
+    o.Identifier.LogicbrokerKey.toString().toLowerCase() === identifier ||
+    o.Identifier.LinkKey.toString().toLowerCase() === identifier;
+  });
+  return foundOrder;
+};
 
 /**
  * Filter all orders response by status code
@@ -68,7 +76,7 @@ const toDialogString = String.prototype.toDialogString = function () {
 }
 
 module.exports = {
-  getOrderByNumber,
+  getOrderByIdentifier,
   getOrdersByStatus,
   getOpenOrders,
   getIdentifiers,
