@@ -73,7 +73,7 @@ const getMenuData = (records, statuses) => records.map(record => ({
 */
 const toDialogString = String.prototype.toDialogString = function () {
   return _.get(rawStatus2DialogStatus, this);
-}
+};
 
 module.exports = {
   getOrderByIdentifier,

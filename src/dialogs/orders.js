@@ -1,11 +1,11 @@
 const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
-const ordersAPI = require('../apis/order/index');
+const apiStore = require('../apis/apiStore');
 const orderAPIHelper = require('./helpers/orders');
 const { logger } = require('../utils/logger');
 
 const displayOrderByIdentifier = (session, orders, orderNumber) => {
-  session.send(`Give me one second, retrieving info for ` +
+  session.send('Give me one second, retrieving info for ' +
     `order number ${orderNumber}...`);
   const resp = orderAPIHelper.getOrderByIdentifier(orders, orderNumber);
 
@@ -22,7 +22,7 @@ const displayOrderResponse = (session, resp, statusStr) => {
   const status = statusStr.toDialogString().toLowerCase();
 
   if (resp && resp.length > 0) {
-    session.send(`I found ` + `${resp.length} ${status} order${singular ? '.' : 's.'}`);
+    session.send(`I found ${resp.length} ${status} order${singular ? '.' : 's.'}`);
     for (const o of resp)
       session.send(`Order ${o.OrderNumber}`);
   } else {
@@ -45,7 +45,7 @@ module.exports = [
   async (session, args) => {
     try {
       // Get all orders within the last two weeks
-      const tmp = await ordersAPI.getOrders();
+      const tmp = await apiStore.order.getOrders();
       const orders = tmp.Records;
       const totalNumOrders = tmp.TotalRecords;
 
@@ -55,13 +55,17 @@ module.exports = [
 
       // Capture intent from user
       const { intent } = args;
-      const orderNumber = builder.EntityRecognizer.findEntity(intent.entities, entities.orderNumber);
+      const orderNumber = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderNumber);
       const open = builder.EntityRecognizer.findEntity(intent.entities, entities.openOrder);
       const failed = builder.EntityRecognizer.findEntity(intent.entities, entities.failedOrder);
-      const cancelled = builder.EntityRecognizer.findEntity(intent.entities, entities.cancelledOrder);
-      const completed = builder.EntityRecognizer.findEntity(intent.entities, entities.completedOrder);
+      const cancelled = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.cancelledOrder);
+      const completed = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.completedOrder);
       const r2Ack = builder.EntityRecognizer.findEntity(intent.entities, entities.r2AckOrder);
-      const r2Invoice = builder.EntityRecognizer.findEntity(intent.entities, entities.r2InvoiceOrder);
+      const r2Invoice = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.r2InvoiceOrder);
       const r2Ship = builder.EntityRecognizer.findEntity(intent.entities, entities.r2ShipOrder);
       const dateTime = builder.EntityRecognizer.findEntity(intent.entities, entities.dateTime);
 
