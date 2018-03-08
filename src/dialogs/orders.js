@@ -2,12 +2,11 @@ const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
 const ordersAPI = require('../apis/order/index');
 const orderAPIHelper = require('./helpers/orders');
-const  { toDialogString } = orderAPIHelper;
 
-const displayOrderByNumber = (session, orders, orderNumber) => {
+const displayOrderByIdentifier = (session, orders, orderNumber) => {
   session.send(`Give me one second, retrieving info for ` +
     `order number ${orderNumber}...`);
-  const resp = orderAPIHelper.getOrderByNumber(orders, orderNumber);
+  const resp = orderAPIHelper.getOrderByIdentifier(orders, orderNumber);
 
   if (resp) {
     session.send('Order found. Check the console log.');
@@ -15,7 +14,7 @@ const displayOrderByNumber = (session, orders, orderNumber) => {
   } else {
     session.send(`Order ${orderNumber} not found.`);
   }
-}
+};
 
 const displayOrderResponse = (session, resp, statusStr) => {
   const singular = resp.length === 1;
@@ -28,18 +27,18 @@ const displayOrderResponse = (session, resp, statusStr) => {
   } else {
     session.send(`There are no ${status} orders at this time.`);
   }
-} 
+};
 
 const displayOpenOrders = (session, orders) => {
   const resp = orderAPIHelper.getOpenOrders(orders);
   displayOrderResponse(session, resp, 'Open');
-}
+};
 
 const displayOrdersByStatus = (session, orders, statusInt) => {
   const resp = orderAPIHelper.getOrdersByStatus(orders, statusInt);
   const statusStr = statusInt2Str[statusInt];
   displayOrderResponse(session, resp, statusStr);
-}
+};
 
 module.exports = [
   async (session, args) => {
@@ -67,7 +66,7 @@ module.exports = [
 
       // Response provided with an order number
       if (orderNumber)
-        displayOrderByNumber(session, orders, orderNumber.entity);
+        displayOrderByIdentifier(session, orders, orderNumber.entity);
       // Response to show open orders
       else if (open)
         displayOpenOrders(session, orders);
