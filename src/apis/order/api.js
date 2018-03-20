@@ -2,10 +2,14 @@ const Promise = require('bluebird');
 const request = require('../helpers/request');
 const moment = require('moment');
 
-const getOrders = (from = moment().subtract(14, 'days').format('MM-DD-YYYY'), status = '') =>
+// Get all orders within the last two weeks by default of all statuses
+const getOrders = (fromDate, toDate, statusStr) =>
   new Promise(async (resolve, reject) => {
     try {
-      const res = await request.get('/v2/Orders', { from, status });
+      const from = fromDate || moment().subtract(14, 'days').format('MM-DD-YYYY');
+      const to = toDate || '';
+      const status = statusStr || '';
+      const res = await request.get('/v2/Orders', { from, to, status });
       resolve(res);
     } catch (e) {
       reject(e);

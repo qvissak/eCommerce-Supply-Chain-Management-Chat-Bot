@@ -2,6 +2,7 @@ const builder = require('botbuilder');
 const { entities } = require('../utils/constants');
 const apiStore = require('../apis/apiStore');
 const _ = require('lodash');
+const { logger } = require('../utils/logger');
 
 const updateOrderStatus = async (session, status, OnlyIncreaseStatus, LogicbrokerKeys) => {
   try {
@@ -59,7 +60,7 @@ module.exports = [
     } catch (e) {
       logger.error('Retrieving Orders', e);
       console.error(e.message);
-      session.send('An error occured!');
+      session.send('An error occurred!');
       session.endDialog();
     }
   },

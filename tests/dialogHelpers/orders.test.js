@@ -28,7 +28,7 @@ describe('Dialog Order Utils', function() {
 
   it('getOrdersByStatus should work', function() {
     const statusCode = statusStr2Int.Cancelled;
-    const cancelledOrders = orderHelper.getOrdersByStatus(records, statusCode);
+    const cancelledOrders = orderHelper.filterOrdersByStatus(records, statusCode);
     expect(cancelledOrders).to.exist;
   });
 
