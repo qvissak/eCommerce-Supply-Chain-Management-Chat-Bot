@@ -10,12 +10,11 @@ const { rawStatus2DialogStatus } = require('../../utils/constants');
  */
 const getOrderByIdentifier = (records, identifier) => {
   const ident = identifier.toString().toLowerCase();
-  const foundOrder =  _.find(records, (o) => {
-    return o.OrderNumber.toString().toLowerCase() === ident ||
+  const foundOrder = _.find(records, o =>
+    o.OrderNumber.toString().toLowerCase() === ident ||
     o.Identifier.SourceKey.toString().toLowerCase() === identifier ||
     o.Identifier.LogicbrokerKey.toString().toLowerCase() === identifier ||
-    o.Identifier.LinkKey.toString().toLowerCase() === identifier;
-  });
+    o.Identifier.LinkKey.toString().toLowerCase() === identifier);
   return foundOrder;
 };
 
@@ -25,7 +24,7 @@ const getOrderByIdentifier = (records, identifier) => {
  * @param number statusCode
  * @returns {Object[]} objects which have the given status code
  */
-const getOrdersByStatus = (records, statusCode) =>
+const filterOrdersByStatus = (records, statusCode) =>
   _.filter(records, { StatusCode: statusCode });
 
 /**
@@ -77,7 +76,7 @@ const toDialogString = String.prototype.toDialogString = function () {
 
 module.exports = {
   getOrderByIdentifier,
-  getOrdersByStatus,
+  filterOrdersByStatus,
   getOpenOrders,
   getIdentifiers,
   getMenuData,
