@@ -2,14 +2,22 @@ const Promise = require('bluebird');
 const request = require('../helpers/request');
 const moment = require('moment');
 
+// TODO: Get an order by order number
+// Make 3 api calls and try to find it
+// const getOrderByID = (orderNumber) => 
+
 // Get all orders within the last two weeks by default of all statuses
-const getOrders = (fromDate, toDate, statusStr) =>
+// TODO: implement paging
+const getOrders = (fromDate, toDate, statusStr, page = 0) =>
   new Promise(async (resolve, reject) => {
     try {
       const from = fromDate || moment().subtract(14, 'days').format('MM-DD-YYYY');
       const to = toDate || '';
       const status = statusStr || '';
-      const res = await request.get('/v2/Orders', { from, to, status });
+      const pageSize = 50;
+      const res = await request.get('/v2/Orders', {
+        from, to, status, page, pageSize,
+      });
       resolve(res);
     } catch (e) {
       reject(e);

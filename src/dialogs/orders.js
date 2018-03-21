@@ -1,30 +1,15 @@
 const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
-const apiStore = require('../apis/apiStore');
 const orderAPIHelper = require('./helpers/orders');
 const { logger } = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
 
-const getOrdersByStatus = async (session, dateTime = undefined, status = undefined) => {
-  try {
-    const from = dateTime ? dateTime.start : dateTime;
-    const to = dateTime ? dateTime.end : dateTime;
-    const response = await apiStore.order.getOrders(from, to, status);
-    // Set session data
-    session.userData.orders = response.Records;
-    session.userData.totalNumOrders = response.TotalRecords;
-    return response.Records;
-  } catch (e) {
-    session.send(`${e.error.Message}`);
-    return [];
-  }
-};
-
 const displayOrderByIdentifier = async (session, orderNumber) => {
   session.send('Give me one second, retrieving info for ' +
     `order number ${orderNumber}...`);
-  const orders = await getOrdersByStatus(session);
-  const resp = orderAPIHelper.getOrderByIdentifier(orders, orderNumber);
+  // TODO: call a different function directly below getOrderByID
+  const payload = await orderAPIHelper.getOrdersByStatus(session);
+  const resp = orderAPIHelper.getOrderByIdentifier(payload.Records, orderNumber);
 
   if (resp) {
     // TODO: implement output on display window
@@ -35,29 +20,34 @@ const displayOrderByIdentifier = async (session, orderNumber) => {
   }
 };
 
-const displayOrderResponse = (session, resp, statusStr) => {
+const displayOrderResponse = (session, payload, statusStr) => {
+  const totalRecords = payload.TotalRecords;
+  const resp = payload.Records;
   const singular = resp.length === 1;
   const status = statusStr.toDialogString().toLowerCase();
 
   if (resp && resp.length > 0) {
-    session.send(`I found ${resp.length} ${status} order${singular ? '.' : 's.'}`);
+    session.send(`Displaying ${resp.length} ${status} order${singular ? '.' : 's.'}`);
     resp.forEach(o => session.send(`Order ${o.OrderNumber}`));
+    if (totalRecords > resp.length) {
+      session.send(`There are ${totalRecords - resp.length} more records to display.`);
+      builder.Prompts.choice(session, 'Would you like to see more?', 'Yes|No', { listStyle: 3 });
+    }
   } else {
     session.send(`There are no ${status} orders at this time.`);
   }
 };
 
 const displayOpenOrders = async (session, dateTime) => {
-  const orders = await getOrdersByStatus(session, dateTime);
-  const resp = orderAPIHelper.getOpenOrders(orders);
-  displayOrderResponse(session, resp, 'Open');
+  const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
+  const payloadOpen = orderAPIHelper.getOpenOrders(payload);
+  displayOrderResponse(session, payloadOpen, 'Open');
 };
 
 const displayOrdersByStatus = async (session, dateTime, statusInt) => {
-  const orders = await getOrdersByStatus(session, dateTime);
-  const resp = orderAPIHelper.filterOrdersByStatus(orders, statusInt);
+  const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
   const statusStr = statusInt2Str[statusInt];
-  displayOrderResponse(session, resp, statusStr);
+  displayOrderResponse(session, payload, statusStr);
 };
 
 module.exports = [
