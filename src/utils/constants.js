@@ -33,7 +33,11 @@ module.exports = {
     orderBillingAddress: 'Orders.Details::BillAddress',
     orderShippingAddress: 'Orders.Details::ShipAddress',
     orderLineItems: 'Orders.Details::LineItems',
-    dateTime: 'builtin.datetimeV2',
+    // Explanations of entities w/ syntax:
+    // https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-reference-prebuilt-entities#subtypes-of-datetimev2
+    date: 'builtin.datetimeV2.date',
+    daterange: 'builtin.datetimeV2.daterange',
+    datetr: 'builtin.datetimeV2.datetimerange',
   },
   statusStr2Int: {
     /* Omitted draft (code -1) */

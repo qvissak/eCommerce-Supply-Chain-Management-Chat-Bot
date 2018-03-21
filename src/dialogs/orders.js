@@ -1,8 +1,9 @@
 const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
-const ordersAPI = require('../apis/order/index');
+const apiStore = require('../apis/apiStore');
 const orderAPIHelper = require('./helpers/orders');
 const { logger } = require('../utils/logger');
+const dateHelper = require('./helpers/dates');
 
 const displayOrderDetails = (session, order) => {
   // TODO: show cards offering different information about the order
@@ -37,6 +38,21 @@ const displayOrderLineItems = (session, order) => {
   }
 };
 
+const getOrdersByStatus = async (session, dateTime = undefined, status = undefined) => {
+  try {
+    const from = dateTime ? dateTime.start : dateTime;
+    const to = dateTime ? dateTime.end : dateTime;
+    const response = await apiStore.order.getOrders(from, to, status);
+    // Set session data
+    session.userData.orders = response.Records;
+    session.userData.totalNumOrders = response.TotalRecords;
+    return response.Records;
+  } catch (e) {
+    session.send(`${e.error.Message}`);
+    return [];
+  }
+};
+
 const displayOrderResponse = (session, resp, statusStr) => {
   const singular = resp.length === 1;
   const status = statusStr.toDialogString().toLowerCase();
@@ -49,13 +65,15 @@ const displayOrderResponse = (session, resp, statusStr) => {
   }
 };
 
-const displayOpenOrders = (session, orders) => {
+const displayOpenOrders = async (session, dateTime) => {
+  const orders = await getOrdersByStatus(session, dateTime);
   const resp = orderAPIHelper.getOpenOrders(orders);
   displayOrderResponse(session, resp, 'Open');
 };
 
-const displayOrdersByStatus = (session, orders, statusInt) => {
-  const resp = orderAPIHelper.getOrdersByStatus(orders, statusInt);
+const displayOrdersByStatus = async (session, dateTime, statusInt) => {
+  const orders = await getOrdersByStatus(session, dateTime);
+  const resp = orderAPIHelper.filterOrdersByStatus(orders, statusInt);
   const statusStr = statusInt2Str[statusInt];
   displayOrderResponse(session, resp, statusStr);
 };
@@ -63,24 +81,19 @@ const displayOrdersByStatus = (session, orders, statusInt) => {
 module.exports = [
   async (session, args) => {
     try {
-      // Get all orders within the last two weeks
-      const tmp = await ordersAPI.getOrders();
-      const orders = tmp.Records;
-      const totalNumOrders = tmp.TotalRecords;
-
-      // Set session data
-      session.userData.orders = orders;
-      session.userData.totalNumOrders = totalNumOrders;
-
       // Capture intent from user
       const { intent } = args;
-      const orderNumber = builder.EntityRecognizer.findEntity(intent.entities, entities.orderNumber);
+      const orderNumber = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderNumber);
       const open = builder.EntityRecognizer.findEntity(intent.entities, entities.openOrder);
       const failed = builder.EntityRecognizer.findEntity(intent.entities, entities.failedOrder);
-      const cancelled = builder.EntityRecognizer.findEntity(intent.entities, entities.cancelledOrder);
-      const completed = builder.EntityRecognizer.findEntity(intent.entities, entities.completedOrder);
+      const cancelled = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.cancelledOrder);
+      const completed = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.completedOrder);
       const r2Ack = builder.EntityRecognizer.findEntity(intent.entities, entities.r2AckOrder);
-      const r2Invoice = builder.EntityRecognizer.findEntity(intent.entities, entities.r2InvoiceOrder);
+      const r2Invoice = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.r2InvoiceOrder);
       const r2Ship = builder.EntityRecognizer.findEntity(intent.entities, entities.r2ShipOrder);
       const orderBillingAddr = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderBillingAddress);
@@ -88,10 +101,18 @@ module.exports = [
         .findEntity(intent.entities, entities.orderShippingAddress);
       const orderLineItems = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderLineItems);
-      const dateTime = builder.EntityRecognizer.findEntity(intent.entities, entities.dateTime);
+      const date = builder.EntityRecognizer.findEntity(intent.entities, entities.date);
+      const daterange = builder.EntityRecognizer.findEntity(intent.entities, entities.daterange);
+      const datetimerange = builder.EntityRecognizer.findEntity(intent.entities, entities.datetr);
+
+      // Resolve date/daterange/datetimerange intents to date object
+      // i.e { start: '2017-01-03', end: '2018-01-13'}
+      const dateTime = dateHelper.getDateTime(session, (date || daterange || datetimerange));
+
+      // Response provided with an order number
       if (orderNumber) {
-        // Response provided with an order number
-        const order = orderAPIHelper.getOrderByIdentifier(orders, orderNumber.entity.replace(' ', ''));
+        const order = orderAPIHelper
+          .getOrderByIdentifier(session.userData.orders, orderNumber.entity.replace(' ', ''));
         if (order) {
           if (orderBillingAddr) {
             displayOrderBillingAddress(session, order);
@@ -105,29 +126,29 @@ module.exports = [
         } else {
           session.send(`Order ${orderNumber.entity.replace(' ', '')} not found.`);
         }
+      // Response to show open orders
       } else if (open) {
-        // Response to show open orders
-        displayOpenOrders(session, orders);
+        displayOpenOrders(session, dateTime);
+      // Response to show failed orders
       } else if (failed) {
-        // Response to show failed orders
-        displayOrdersByStatus(session, orders, statusStr2Int.Failed);
+        displayOrdersByStatus(session, dateTime, statusStr2Int.Failed);
+      // Response to show cancelled orders
       } else if (cancelled) {
-        // Response to show cancelled orders
-        displayOrdersByStatus(session, orders, statusStr2Int.Cancelled);
+        displayOrdersByStatus(session, dateTime, statusStr2Int.Cancelled);
+      // Response to show completed orders
       } else if (completed) {
-        // Response to show completed orders
-        displayOrdersByStatus(session, orders, statusStr2Int.Complete);
+        displayOrdersByStatus(session, dateTime, statusStr2Int.Complete);
+      // Response to show ready to ack orders
       } else if (r2Ack) {
-        // Response to show ready to ack orders
-        displayOrdersByStatus(session, orders, statusStr2Int.R2Ack);
+        displayOrdersByStatus(session, dateTime, statusStr2Int.R2Ack);
+      // Response to show ready to invoice orders
       } else if (r2Invoice) {
-        // Response to show ready to invoice orders
-        displayOrdersByStatus(session, orders, statusStr2Int.R2Invoice);
+        displayOrdersByStatus(session, dateTime, statusStr2Int.R2Invoice);
+      // Response to show ready to ship orders
       } else if (r2Ship) {
-        // Response to show ready to ship orders
-        displayOrdersByStatus(session, orders, statusStr2Int.R2Ship);
+        displayOrdersByStatus(session, dateTime, statusStr2Int.R2Ship);
+      // Default response
       } else {
-        // Default response
         session.send('I was unable to determine what you need. Can you be more specific?');
       }
       session.endDialog();

@@ -10,12 +10,12 @@ const { rawStatus2DialogStatus } = require('../../utils/constants');
 const getOrderBillingAddress = (order) => {
   let str = '';
   if (order && order.BillToAddress) {
-    const address = order.BillToAddress;
-    const name = address.CompanyName;
-    const street = address.Address1;
-    const city = address.City;
-    const state = address.State;
-    const zip = address.Zip;
+    const address = order.BillToAddress || '';
+    const name = address.CompanyName || '';
+    const street = address.Address1 || '';
+    const city = address.City || '';
+    const state = address.State || '';
+    const zip = address.Zip || '';
     str = `${name}\n\n${street}\n\n${city}, ${state} ${zip}`;
   }
   return str;
@@ -29,12 +29,12 @@ const getOrderBillingAddress = (order) => {
 const getOrderShippingAddress = (order) => {
   let str = '';
   if (order && order.ShipToAddress) {
-    const address = order.ShipToAddress;
-    const name = address.CompanyName;
-    const street = address.Address1;
-    const city = address.City;
-    const state = address.State;
-    const zip = address.Zip;
+    const address = order.ShipToAddress || '';
+    const name = address.CompanyName || '';
+    const street = address.Address1 || '';
+    const city = address.City || '';
+    const state = address.State || '';
+    const zip = address.Zip || '';
     str = `${name}\n\n${street}\n\n${city}, ${state} ${zip}`;
   }
   return str;
@@ -54,7 +54,7 @@ const getOrderLineItems = (order) => {
       let str = `Item ${i}`;
       i += 1;
       if (lineItem.Description) str = `${str}\n\n${lineItem.Description}`;
-      if (lineItem.Quantity) str = `${str}\n\nQuantity: ${lineItem.Quantity}`
+      if (lineItem.Quantity) str = `${str}\n\nQuantity: ${lineItem.Quantity}`;
       if (lineItem.ItemIdentifier) {
         str = `${str}\n\nSupplier SKU: ${lineItem.ItemIdentifier.SupplierSKU}`;
         str = `${str}\n\nPartner SKU: ${lineItem.ItemIdentifier.PartnerSKU}`;
@@ -73,12 +73,11 @@ const getOrderLineItems = (order) => {
  */
 const getOrderByIdentifier = (records, identifier) => {
   const ident = identifier.toString().toLowerCase();
-  const foundOrder =  _.find(records, (o) => {
-    return o.OrderNumber.toString().toLowerCase() === ident ||
+  const foundOrder = _.find(records, o =>
+    o.OrderNumber.toString().toLowerCase() === ident ||
     o.Identifier.SourceKey.toString().toLowerCase() === identifier ||
     o.Identifier.LogicbrokerKey.toString().toLowerCase() === identifier ||
-    o.Identifier.LinkKey.toString().toLowerCase() === identifier;
-  });
+    o.Identifier.LinkKey.toString().toLowerCase() === identifier);
   return foundOrder;
 };
 
@@ -88,7 +87,7 @@ const getOrderByIdentifier = (records, identifier) => {
  * @param number statusCode
  * @returns {Object[]} objects which have the given status code
  */
-const getOrdersByStatus = (records, statusCode) =>
+const filterOrdersByStatus = (records, statusCode) =>
   _.filter(records, { StatusCode: statusCode });
 
 /**
@@ -136,14 +135,14 @@ const getMenuData = (records, statuses) => records.map(record => ({
 */
 const toDialogString = String.prototype.toDialogString = function () {
   return _.get(rawStatus2DialogStatus, this);
-}
+};
 
 module.exports = {
   getOrderBillingAddress,
   getOrderShippingAddress,
   getOrderLineItems,
   getOrderByIdentifier,
-  getOrdersByStatus,
+  filterOrdersByStatus,
   getOpenOrders,
   getIdentifiers,
   getMenuData,

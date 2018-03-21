@@ -26,9 +26,30 @@ describe('Dialog Order Utils', function() {
       : expect(orderDetails).to.be.undefined;
   });
 
+  it('getOrderBillingAddress should work', function() {
+    const orderNumber = 'TEST0074';
+    const order = orderHelper.getOrderByIdentifier(records, orderNumber);
+    const addr = orderHelper.getOrderBillingAddress(order);
+    expect(addr).to.have.lengthOf.at.least(1);
+  });
+
+  it('getOrderShippingAddress should work', function() {
+    const orderNumber = 'TEST0074';
+    const order = orderHelper.getOrderByIdentifier(records, orderNumber);
+    const addr = orderHelper.getOrderShippingAddress(order);
+    expect(addr).to.have.lengthOf.at.least(1);
+  });
+
+  it('getOrderLineItems should work', function() {
+    const orderNumber = 'TEST0074';
+    const order = orderHelper.getOrderByIdentifier(records, orderNumber);
+    const lineItems = orderHelper.getOrderLineItems(order);
+    expect(lineItems).to.have.lengthOf.at.least(1);
+  });
+
   it('getOrdersByStatus should work', function() {
     const statusCode = statusStr2Int.Cancelled;
-    const cancelledOrders = orderHelper.getOrdersByStatus(records, statusCode);
+    const cancelledOrders = orderHelper.filterOrdersByStatus(records, statusCode);
     expect(cancelledOrders).to.exist;
   });
 

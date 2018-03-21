@@ -12,7 +12,7 @@ const getOrderById = orderNumber => new Promise(async (resolve, reject) => {
   }
 });
 
-const { getOrders, getReadyOrders } = api;
+const { getOrders, getReadyOrders, putStatusOrders } = api;
 
 // TODO: Get Array of order numbers that are ready
 
@@ -20,4 +20,5 @@ module.exports = {
   getOrderById,
   getOrders,
   getReadyOrders,
+  putStatusOrders,
 };

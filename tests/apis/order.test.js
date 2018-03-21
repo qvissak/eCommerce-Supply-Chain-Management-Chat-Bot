@@ -16,13 +16,13 @@ describe('Order Endpoints - LogicBroker API Service', function() {
         });
     });
     it('status parameter set to Ignored should return only Ignored orders ', function() {
-      return ordersApi.getOrders(null, 'Ignored')
+      return ordersApi.getOrders(undefined, undefined, 'Ignored')
         .then((data) => {
           orderResHelper(data);
         });
     });
     it('status parameter set to Cancelled should return only Cancelled orders ', function() {
-      return ordersApi.getOrders(null, 'Cancelled')
+      return ordersApi.getOrders(undefined, undefined, 'Cancelled')
         .then((data) => {
           orderResHelper(data);
         });
@@ -36,7 +36,6 @@ describe('Order Endpoints - LogicBroker API Service', function() {
           expect(data.Records).to.exist;
           expect(_.isArray(data.Records)).to.be.true;
           expect(data.TotalRecords).to.exist;
-          expect(data.TotalRecords === data.Records.length).to.be.true;
         });
     });
   });

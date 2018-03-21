@@ -7,7 +7,7 @@ const { botbuilder } = require('../middleware/setChannelContext');
 const restify = require('restify');
 const builder = require('botbuilder');
 const azure = require('botbuilder-azure');
-const { botName, dialogs } = require('./utils/constants');
+const { dialogs } = require('./utils/constants');
 const dialog = require('./dialogs/dialogStore');
 
 const logger = require('./utils/logger');
@@ -63,7 +63,8 @@ const recognizer = new builder.LuisRecognizer(luisModelUrl);
 bot.recognizer(recognizer);
 
 bot.dialog(dialogs.orders.id, dialog.order).triggerAction({ matches: dialogs.orders.intent });
-bot.dialog(dialogs.updateOrderStatus.id, dialog.updateOrderStatus).triggerAction({ matches: dialogs.updateOrderStatus.intent });
+bot.dialog(dialogs.updateOrderStatus.id, dialog.updateOrderStatus)
+  .triggerAction({ matches: dialogs.updateOrderStatus.intent });
 bot.dialog(dialogs.login.id, dialog.login);
 bot.dialog(dialogs.help.id, dialog.help).triggerAction({ matches: dialogs.help.intent });
 
