@@ -4,16 +4,36 @@ const ordersAPI = require('../apis/order/index');
 const orderAPIHelper = require('./helpers/orders');
 const { logger } = require('../utils/logger');
 
-const displayOrderByIdentifier = (session, orders, orderNumber) => {
-  session.send(`Give me one second, retrieving info for ` +
-    `order number ${orderNumber}...`);
-  const resp = orderAPIHelper.getOrderByIdentifier(orders, orderNumber);
+const displayOrderDetails = (session, order) => {
+  // TODO: show cards offering different information about the order
+  session.send('Ok, here is information about the order...');
+  return order;
+};
 
-  if (resp) {
-    session.send('Order found. Check the console log.');
-    console.log(`Order found, result is\n${JSON.stringify(resp)}`);
+const displayOrderBillingAddress = (session, order) => {
+  const address = orderAPIHelper.getOrderBillingAddress(order);
+  if (address && address.length > 0) {
+    session.send(address);
   } else {
-    session.send(`Order ${orderNumber} not found.`);
+    session.send('Sorry, there is no billing address for that order.');
+  }
+};
+
+const displayOrderShippingAddress = (session, order) => {
+  const address = orderAPIHelper.getOrderShippingAddress(order);
+  if (address && address.length > 0) {
+    session.send(address);
+  } else {
+    session.send('Sorry, there is no shipping address for that order.');
+  }
+};
+
+const displayOrderLineItems = (session, order) => {
+  const lineItems = orderAPIHelper.getOrderLineItems(order);
+  if (lineItems && lineItems.length > 0) {
+    lineItems.forEach(item => session.send(item));
+  } else {
+    session.send('Sorry, there are no line items for that order.');
   }
 };
 
@@ -22,9 +42,8 @@ const displayOrderResponse = (session, resp, statusStr) => {
   const status = statusStr.toDialogString().toLowerCase();
 
   if (resp && resp.length > 0) {
-    session.send(`I found ` + `${resp.length} ${status} order${singular ? '.' : 's.'}`);
-    for (const o of resp)
-      session.send(`Order ${o.OrderNumber}`);
+    session.send(`I found ${resp.length} ${status} order${singular ? '.' : 's.'}`);
+    resp.forEach(order => session.send(`Order ${order.OrderNumber}`));
   } else {
     session.send(`There are no ${status} orders at this time.`);
   }
@@ -63,41 +82,59 @@ module.exports = [
       const r2Ack = builder.EntityRecognizer.findEntity(intent.entities, entities.r2AckOrder);
       const r2Invoice = builder.EntityRecognizer.findEntity(intent.entities, entities.r2InvoiceOrder);
       const r2Ship = builder.EntityRecognizer.findEntity(intent.entities, entities.r2ShipOrder);
+      const orderBillingAddr = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderBillingAddress);
+      const orderShippingAddr = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderShippingAddress);
+      const orderLineItems = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderLineItems);
       const dateTime = builder.EntityRecognizer.findEntity(intent.entities, entities.dateTime);
-
-      // Response provided with an order number
-      if (orderNumber)
-        displayOrderByIdentifier(session, orders, orderNumber.entity);
-      // Response to show open orders
-      else if (open)
+      if (orderNumber) {
+        // Response provided with an order number
+        const order = orderAPIHelper.getOrderByIdentifier(orders, orderNumber.entity.replace(' ', ''));
+        if (order) {
+          if (orderBillingAddr) {
+            displayOrderBillingAddress(session, order);
+          } else if (orderShippingAddr) {
+            displayOrderShippingAddress(session, order);
+          } else if (orderLineItems) {
+            displayOrderLineItems(session, order);
+          } else {
+            displayOrderDetails(session, order);
+          }
+        } else {
+          session.send(`Order ${orderNumber.entity.replace(' ', '')} not found.`);
+        }
+      } else if (open) {
+        // Response to show open orders
         displayOpenOrders(session, orders);
-      // Response to show failed orders
-      else if (failed)
+      } else if (failed) {
+        // Response to show failed orders
         displayOrdersByStatus(session, orders, statusStr2Int.Failed);
-      // Response to show cancelled orders
-      else if (cancelled)
+      } else if (cancelled) {
+        // Response to show cancelled orders
         displayOrdersByStatus(session, orders, statusStr2Int.Cancelled);
-      // Response to show completed orders
-      else if (completed)
+      } else if (completed) {
+        // Response to show completed orders
         displayOrdersByStatus(session, orders, statusStr2Int.Complete);
-      // Response to show ready to ack orders
-      else if (r2Ack)
+      } else if (r2Ack) {
+        // Response to show ready to ack orders
         displayOrdersByStatus(session, orders, statusStr2Int.R2Ack);
-      // Response to show ready to invoice orders
-      else if (r2Invoice)
+      } else if (r2Invoice) {
+        // Response to show ready to invoice orders
         displayOrdersByStatus(session, orders, statusStr2Int.R2Invoice);
-      // Response to show ready to ship orders
-      else if (r2Ship)
+      } else if (r2Ship) {
+        // Response to show ready to ship orders
         displayOrdersByStatus(session, orders, statusStr2Int.R2Ship);
-      // Default response
-      else
+      } else {
+        // Default response
         session.send('I was unable to determine what you need. Can you be more specific?');
-
+      }
       session.endDialog();
     } catch (e) {
       logger.error('Retrieving Orders', e);
       console.error(e.message);
-      session.send('Error!');
+      session.send('An error occurred!');
       session.endDialog();
     }
   },

@@ -29,6 +29,10 @@ module.exports = {
     r2AckOrder: 'Orders.Status::R2Ack',
     r2InvoiceOrder: 'Orders.Status::R2Invoice',
     r2ShipOrder: 'Orders.Status::R2Ship',
+    orderDetails: 'Orders.Details',
+    orderBillingAddress: 'Orders.Details::BillAddress',
+    orderShippingAddress: 'Orders.Details::ShipAddress',
+    orderLineItems: 'Orders.Details::LineItems',
     dateTime: 'builtin.datetimeV2',
   },
   statusStr2Int: {

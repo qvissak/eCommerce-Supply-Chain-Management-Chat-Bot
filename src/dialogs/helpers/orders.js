@@ -3,6 +3,69 @@ const moment = require('moment');
 const { rawStatus2DialogStatus } = require('../../utils/constants');
 
 /**
+ * Get a human-readable string for the billing address of the given order
+ * @param order
+ * @returns {string}
+ */
+const getOrderBillingAddress = (order) => {
+  let str = '';
+  if (order && order.BillToAddress) {
+    const address = order.BillToAddress;
+    const name = address.CompanyName;
+    const street = address.Address1;
+    const city = address.City;
+    const state = address.State;
+    const zip = address.Zip;
+    str = `${name}\n\n${street}\n\n${city}, ${state} ${zip}`;
+  }
+  return str;
+};
+
+/**
+ * Get a human-readable string for the shipping address of the given order
+ * @param order
+ * @returns {string}
+ */
+const getOrderShippingAddress = (order) => {
+  let str = '';
+  if (order && order.ShipToAddress) {
+    const address = order.ShipToAddress;
+    const name = address.CompanyName;
+    const street = address.Address1;
+    const city = address.City;
+    const state = address.State;
+    const zip = address.Zip;
+    str = `${name}\n\n${street}\n\n${city}, ${state} ${zip}`;
+  }
+  return str;
+};
+
+/**
+ * Get a list of human-readable strings for each line item of the given order
+ * Each string in the list gives info about the line item's SKU, quantity, and description
+ * @param order
+ * @returns {[string]}
+ */
+const getOrderLineItems = (order) => {
+  const lineItems = [];
+  if (order && order.OrderLines) {
+    let i = 1;
+    order.OrderLines.forEach((lineItem) => {
+      let str = `Item ${i}`;
+      i += 1;
+      if (lineItem.Description) str = `${str}\n\n${lineItem.Description}`;
+      if (lineItem.Quantity) str = `${str}\n\nQuantity: ${lineItem.Quantity}`
+      if (lineItem.ItemIdentifier) {
+        str = `${str}\n\nSupplier SKU: ${lineItem.ItemIdentifier.SupplierSKU}`;
+        str = `${str}\n\nPartner SKU: ${lineItem.ItemIdentifier.PartnerSKU}`;
+      }
+      lineItems.push(str);
+    });
+  }
+  return lineItems;
+};
+
+/**
  * Filter all orders response by order number or some identifier
  * @param {Object[]} records
  * @param {String} identifier (can be OrderNumber, SourceKey, LogicbrokerKey, or LinkKey)
@@ -76,6 +139,9 @@ const toDialogString = String.prototype.toDialogString = function () {
 }
 
 module.exports = {
+  getOrderBillingAddress,
+  getOrderShippingAddress,
+  getOrderLineItems,
   getOrderByIdentifier,
   getOrdersByStatus,
   getOpenOrders,
