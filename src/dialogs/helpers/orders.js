@@ -62,7 +62,7 @@ const getMenuData = (records, statuses) => records.map(record => ({
   identifier: record.Identifier,
   orderNumber: record.OrderNumber,
   orderDate: moment(record.OrderDate).format('MMMM Do, YYYY'),
-  status: getStatusByCode(statuses, record.StatusCode),
+  status: statuses[record.StatusCode],
 }));
 
 /**
