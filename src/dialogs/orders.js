@@ -1,6 +1,7 @@
 const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
 const orderAPIHelper = require('./helpers/orders');
+const createCards = require('./helpers/cards');
 const { logger } = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
 
@@ -20,19 +21,13 @@ const displayOrderByIdentifier = async (session, orderNumber) => {
   }
 };
 
-const displayOrderResponse = (session, payload, statusStr) => {
-  const totalRecords = payload.TotalRecords;
-  const resp = payload.Records;
-  const singular = resp.length === 1;
+const displayOrderResponse = (session, resp, statusStr) => {
   const status = statusStr.toDialogString().toLowerCase();
 
   if (resp && resp.length > 0) {
-    session.send(`Displaying ${resp.length} ${status} order${singular ? '.' : 's.'}`);
-    resp.forEach(o => session.send(`Order ${o.OrderNumber}`));
-    if (totalRecords > resp.length) {
-      session.send(`There are ${totalRecords - resp.length} more records to display.`);
-      builder.Prompts.choice(session, 'Would you like to see more?', 'Yes|No', { listStyle: 3 });
-    }
+    // TODO: Find out which channels do not support cards
+    const menuData = orderAPIHelper.getMenuData(resp, statusInt2Str);
+    createCards.heroCards(session, menuData, status);
   } else {
     session.send(`There are no ${status} orders at this time.`);
   }
@@ -106,8 +101,8 @@ module.exports = [
 
       session.endDialog();
     } catch (e) {
-      logger.error('Retrieving Orders', e);
-      console.error(e.message);
+      // logger.error('Retrieving Orders', e);
+      console.error(e);
       session.send('Error!');
       session.endDialog();
     }
