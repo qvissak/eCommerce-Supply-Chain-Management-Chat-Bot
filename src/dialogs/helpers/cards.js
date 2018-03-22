@@ -5,7 +5,6 @@ class CreateCards {
     const msg = new builder.Message(session);
     msg.attachmentLayout(builder.AttachmentLayout.carousel);
     const attachments = [];
-    session.send(`${statusStr} Orders`);
     menuData.forEach((orderInfo) => {
       attachments.push(new builder.ThumbnailCard(session)
         .title(orderInfo.orderNumber)

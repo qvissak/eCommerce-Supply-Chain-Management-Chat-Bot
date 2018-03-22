@@ -36,13 +36,13 @@ const displayOrderResponse = (session, resp, statusStr) => {
 const displayOpenOrders = async (session, dateTime) => {
   const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
   const payloadOpen = orderAPIHelper.getOpenOrders(payload);
-  displayOrderResponse(session, payloadOpen, 'Open');
+  displayOrderResponse(session, payloadOpen.Records, 'Open');
 };
 
 const displayOrdersByStatus = async (session, dateTime, statusInt) => {
   const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
   const statusStr = statusInt2Str[statusInt];
-  displayOrderResponse(session, payload, statusStr);
+  displayOrderResponse(session, payload.Records, statusStr);
 };
 
 module.exports = [
@@ -101,7 +101,7 @@ module.exports = [
 
       session.endDialog();
     } catch (e) {
-      // logger.error('Retrieving Orders', e);
+      logger.error('Retrieving Orders', e);
       console.error(e);
       session.send('Error!');
       session.endDialog();
