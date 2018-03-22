@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 const { rawStatus2DialogStatus } = require('../../utils/constants');
+const apiStore = require('../../apis/apiStore');
 
 /**
  * Filter all orders response by order number or some identifier
@@ -29,11 +30,16 @@ const filterOrdersByStatus = (records, statusCode) =>
 
 /**
  * Get all orders with status code less than 1000
- * @param {Object[]} records
+ * @param {Object[]} payload
  * @returns {Object[]} objects which have the given status code
  */
-const getOpenOrders = records =>
-  _.filter(records, o => o.StatusCode < 1000);
+const getOpenOrders = (payload) => {
+  const rv = payload;
+  const records = rv.Records;
+  const openOrders = _.filter(records, o => o.StatusCode < 1000);
+  rv.Records = openOrders;
+  return rv;
+};
 
 /**
  * Maps orders response to object of identifiers
@@ -74,6 +80,24 @@ const toDialogString = String.prototype.toDialogString = function () {
   return _.get(rawStatus2DialogStatus, this);
 };
 
+/**
+ * Returns the total payload (not records, you need to call the attribute records to get records)
+ * @param {Object} session
+ * @param {Object} dateTime
+ * @param {String or Number} status
+ */
+const getOrdersByStatus = async (session, dateTime = undefined, status = undefined) => {
+  try {
+    const from = dateTime ? dateTime.start : dateTime;
+    const to = dateTime ? dateTime.end : dateTime;
+    const response = await apiStore.order.getOrders(from, to, status);
+    return response;
+  } catch (e) {
+    session.send(`${e.error.Message}`);
+    return [];
+  }
+};
+
 module.exports = {
   getOrderByIdentifier,
   filterOrdersByStatus,
@@ -82,4 +106,5 @@ module.exports = {
   getMenuData,
   getStatusByCode,
   toDialogString,
+  getOrdersByStatus,
 };

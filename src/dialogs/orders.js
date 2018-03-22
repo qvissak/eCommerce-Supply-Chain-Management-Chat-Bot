@@ -1,31 +1,16 @@
 const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
-const apiStore = require('../apis/apiStore');
 const orderAPIHelper = require('./helpers/orders');
 const createCards = require('./helpers/cards');
 const { logger } = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
 
-const getOrdersByStatus = async (session, dateTime = undefined, status = undefined) => {
-  try {
-    const from = dateTime ? dateTime.start : dateTime;
-    const to = dateTime ? dateTime.end : dateTime;
-    const response = await apiStore.order.getOrders(from, to, status);
-    // Set session data
-    session.userData.orders = response.Records;
-    session.userData.totalNumOrders = response.TotalRecords;
-    return response.Records;
-  } catch (e) {
-    session.send(`${e.error.Message}`);
-    return [];
-  }
-};
-
 const displayOrderByIdentifier = async (session, orderNumber) => {
   session.send('Give me one second, retrieving info for ' +
     `order number ${orderNumber}...`);
-  const orders = await getOrdersByStatus(session);
-  const resp = orderAPIHelper.getOrderByIdentifier(orders, orderNumber);
+  // TODO: call a different function directly below getOrderByID
+  const payload = await orderAPIHelper.getOrdersByStatus(session);
+  const resp = orderAPIHelper.getOrderByIdentifier(payload.Records, orderNumber);
 
   if (resp) {
     // TODO: implement output on display window
@@ -49,16 +34,15 @@ const displayOrderResponse = (session, resp, statusStr) => {
 };
 
 const displayOpenOrders = async (session, dateTime) => {
-  const orders = await getOrdersByStatus(session, dateTime);
-  const resp = orderAPIHelper.getOpenOrders(orders);
-  displayOrderResponse(session, resp, 'Open');
+  const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
+  const payloadOpen = orderAPIHelper.getOpenOrders(payload);
+  displayOrderResponse(session, payloadOpen, 'Open');
 };
 
 const displayOrdersByStatus = async (session, dateTime, statusInt) => {
-  const orders = await getOrdersByStatus(session, dateTime);
-  const resp = orderAPIHelper.filterOrdersByStatus(orders, statusInt);
+  const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
   const statusStr = statusInt2Str[statusInt];
-  displayOrderResponse(session, resp, statusStr);
+  displayOrderResponse(session, payload, statusStr);
 };
 
 module.exports = [
