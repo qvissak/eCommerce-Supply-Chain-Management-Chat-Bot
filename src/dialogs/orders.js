@@ -1,13 +1,17 @@
 const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
-const apiStore = require('../apis/apiStore');
 const orderAPIHelper = require('./helpers/orders');
+const createCards = require('./helpers/cards');
 const { logger } = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
 
 const displayOrderDetails = (session, order) => {
-  // TODO: show cards offering different information about the order
-  session.send('Ok, here is information about the order...');
+  const info = orderAPIHelper.getOrderDetails(order);
+  if (info && info.length > 0) {
+    session.send(info);
+  } else {
+    session.send('Sorry, there is no information about this order.');
+  }
   return order;
 };
 
@@ -38,44 +42,28 @@ const displayOrderLineItems = (session, order) => {
   }
 };
 
-const getOrdersByStatus = async (session, dateTime = undefined, status = undefined) => {
-  try {
-    const from = dateTime ? dateTime.start : dateTime;
-    const to = dateTime ? dateTime.end : dateTime;
-    const response = await apiStore.order.getOrders(from, to, status);
-    // Set session data
-    session.userData.orders = response.Records;
-    session.userData.totalNumOrders = response.TotalRecords;
-    return response.Records;
-  } catch (e) {
-    session.send(`${e.error.Message}`);
-    return [];
-  }
-};
-
 const displayOrderResponse = (session, resp, statusStr) => {
-  const singular = resp.length === 1;
   const status = statusStr.toDialogString().toLowerCase();
 
   if (resp && resp.length > 0) {
-    session.send(`I found ${resp.length} ${status} order${singular ? '.' : 's.'}`);
-    resp.forEach(order => session.send(`Order ${order.OrderNumber}`));
+    // TODO: Find out which channels do not support cards
+    const menuData = orderAPIHelper.getMenuData(resp, statusInt2Str);
+    createCards.heroCards(session, menuData, status);
   } else {
     session.send(`There are no ${status} orders at this time.`);
   }
 };
 
 const displayOpenOrders = async (session, dateTime) => {
-  const orders = await getOrdersByStatus(session, dateTime);
-  const resp = orderAPIHelper.getOpenOrders(orders);
-  displayOrderResponse(session, resp, 'Open');
+  const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
+  const payloadOpen = orderAPIHelper.getOpenOrders(payload);
+  displayOrderResponse(session, payloadOpen.Records, 'Open');
 };
 
 const displayOrdersByStatus = async (session, dateTime, statusInt) => {
-  const orders = await getOrdersByStatus(session, dateTime);
-  const resp = orderAPIHelper.filterOrdersByStatus(orders, statusInt);
+  const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
   const statusStr = statusInt2Str[statusInt];
-  displayOrderResponse(session, resp, statusStr);
+  displayOrderResponse(session, payload.Records, statusStr);
 };
 
 module.exports = [
@@ -153,8 +141,8 @@ module.exports = [
       }
       session.endDialog();
     } catch (e) {
-      logger.error('Retrieving Orders', e);
-      console.error(e.message);
+      // logger.error('Retrieving Orders', e);
+      console.error(e);
       session.send('An error occurred!');
       session.endDialog();
     }

@@ -1,6 +1,22 @@
 const _ = require('lodash');
 const moment = require('moment');
-const { rawStatus2DialogStatus } = require('../../utils/constants');
+const { rawStatus2DialogStatus, statusInt2Str } = require('../../utils/constants');
+const apiStore = require('../../apis/apiStore');
+
+const getOrderDetails = (order) => {
+  let str = '';
+  if (order) {
+    const ident = order.Identifier.SourceKey ? `${order.Identifier.SourceKey}\n\n` : '';
+    const status = order.StatusCode ? `Status: ${statusInt2Str[order.StatusCode]}\n\n` : '';
+    const orderDate = order.OrderDate ? `Order date: ${moment(order.OrderDate).format('MMMM Do, YYYY')}\n\n` : '';
+    let numLineItems = 'Line items: 0';
+    if (order.OrderLines) {
+      numLineItems = `Line items: ${order.OrderLines.length}`;
+    }
+    str = `${ident}${status}${orderDate}${numLineItems}`;
+  }
+  return str;
+};
 
 /**
  * Get a human-readable string for the billing address of the given order
@@ -92,11 +108,16 @@ const filterOrdersByStatus = (records, statusCode) =>
 
 /**
  * Get all orders with status code less than 1000
- * @param {Object[]} records
+ * @param {Object[]} payload
  * @returns {Object[]} objects which have the given status code
  */
-const getOpenOrders = records =>
-  _.filter(records, o => o.StatusCode < 1000);
+const getOpenOrders = (payload) => {
+  const rv = payload;
+  const records = rv.Records;
+  const openOrders = _.filter(records, o => o.StatusCode < 1000);
+  rv.Records = openOrders;
+  return rv;
+};
 
 /**
  * Maps orders response to object of identifiers
@@ -125,7 +146,7 @@ const getMenuData = (records, statuses) => records.map(record => ({
   identifier: record.Identifier,
   orderNumber: record.OrderNumber,
   orderDate: moment(record.OrderDate).format('MMMM Do, YYYY'),
-  status: getStatusByCode(statuses, record.StatusCode),
+  status: statuses[record.StatusCode],
 }));
 
 /**
@@ -137,7 +158,26 @@ const toDialogString = String.prototype.toDialogString = function () {
   return _.get(rawStatus2DialogStatus, this);
 };
 
+/**
+ * Returns the total payload (not records, you need to call the attribute records to get records)
+ * @param {Object} session
+ * @param {Object} dateTime
+ * @param {String or Number} status
+ */
+const getOrdersByStatus = async (session, dateTime = undefined, status = undefined) => {
+  try {
+    const from = dateTime ? dateTime.start : dateTime;
+    const to = dateTime ? dateTime.end : dateTime;
+    const response = await apiStore.order.getOrders(from, to, status);
+    return response;
+  } catch (e) {
+    session.send(`${e.error.Message}`);
+    return [];
+  }
+};
+
 module.exports = {
+  getOrderDetails,
   getOrderBillingAddress,
   getOrderShippingAddress,
   getOrderLineItems,
@@ -148,4 +188,5 @@ module.exports = {
   getMenuData,
   getStatusByCode,
   toDialogString,
+  getOrdersByStatus,
 };
