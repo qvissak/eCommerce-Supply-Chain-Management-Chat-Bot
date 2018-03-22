@@ -19,6 +19,11 @@ module.exports = {
       label: 'UpdateOrderStatus',
       intent: 'UpdateOrderStatus',
     },
+    getOrderStatus: {
+      id: 'getOrderStatus',
+      label: 'GetOrderStatus',
+      intent: 'GetStatus',
+    },
   },
   entities: {
     orderNumber: 'Orders.Number',
