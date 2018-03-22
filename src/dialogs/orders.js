@@ -141,7 +141,7 @@ module.exports = [
       }
       session.endDialog();
     } catch (e) {
-      // logger.error('Retrieving Orders', e);
+      logger.error('Retrieving Orders', e);
       console.error(e);
       session.send('An error occurred!');
       session.endDialog();
