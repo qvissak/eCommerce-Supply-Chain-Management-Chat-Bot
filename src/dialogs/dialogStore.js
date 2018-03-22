@@ -4,6 +4,7 @@ const login = require('./login');
 const help = require('./help');
 const hello = require('./hello');
 const updateOrderStatus = require('./updateOrderStatus');
+const getOrderStatus = require('./getOrderStatus');
 
 module.exports = {
   order,
@@ -11,4 +12,5 @@ module.exports = {
   help,
   hello,
   updateOrderStatus,
+  getOrderStatus,
 };
