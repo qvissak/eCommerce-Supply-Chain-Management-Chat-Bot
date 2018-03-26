@@ -54,7 +54,12 @@ const luisModelUrl = `https://${luisAPIHostName}/luis/v2.0/apps/` +
   `${luisAppId}?subscription-key=${luisAPIKey}&spellCheck=${spellCheck}` +
   `&bing-spell-check-subscription-key=${bingSpellcheck}&verbose=true`;
 
-logger.info('Luis config', { luisAppId, luisAPIKey, luisAPIHostName, luisModelUrl });
+logger.info('Luis config', {
+  luisAppId,
+  luisAPIKey,
+  luisAPIHostName,
+  luisModelUrl,
+});
 
 // Main dialog with LUIS - create a recognizer that gets intents from LUIS
 const recognizer = new builder.LuisRecognizer(luisModelUrl);
@@ -62,9 +67,9 @@ const recognizer = new builder.LuisRecognizer(luisModelUrl);
 // Add the recognizer to the bot
 bot.recognizer(recognizer);
 
-bot.dialog(dialogs.orders.id, dialog.order).triggerAction({ matches: dialogs.orders.intent });
 bot.dialog(dialogs.updateOrderStatus.id, dialog.updateOrderStatus)
   .triggerAction({ matches: dialogs.updateOrderStatus.intent });
+bot.dialog(dialogs.orders.id, dialog.order).triggerAction({ matches: dialogs.orders.intent });
 bot.dialog(dialogs.getOrderStatus.id, dialog.getOrderStatus)
   .triggerAction({ matches: dialogs.getOrderStatus.intent });
 bot.dialog(dialogs.login.id, dialog.login);

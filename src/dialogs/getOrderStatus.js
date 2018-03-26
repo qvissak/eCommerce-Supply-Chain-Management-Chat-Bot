@@ -13,8 +13,7 @@ const displayOrderStatus = async (session, orderNumber) => {
     const status = statusInt2Str[statusCode].toDialogString().toLowerCase();
     session.send(`Order ${orderNumber} is in status ${status} (${statusCode}).`);
   } catch (e) {
-    console.error(e.message);
-    session.send(`Order ${orderNumber} not found.`);
+    session.send(`${e.error.Message}`);
   }
 };
 
@@ -35,7 +34,7 @@ module.exports = [
 
       session.endDialog();
     } catch (e) {
-      logger.error('Retrieving Orders', e);
+      logger.error('Retrieving Order Status', e);
       console.error(e.message);
       session.send('Error!');
       session.endDialog();

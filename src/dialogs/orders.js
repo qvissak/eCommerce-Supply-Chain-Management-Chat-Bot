@@ -121,9 +121,8 @@ module.exports = [
           } else {
             displayOrderDetails(session, order);
           }
-        } catch (err) {
-          console.error(err.message);
-          session.send(`Order ${orderNumber.entity.replace(' ', '')} not found.`);
+        } catch (e) {
+          session.send(`${e.error.Message}`);
         }
       // Response to show open orders
       } else if (open) {
