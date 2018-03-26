@@ -101,16 +101,14 @@ module.exports = [
       if (orderNumber) {
         const order = orderAPIHelper
           .getOrderByIdentifier(session.userData.orders, orderNumber.entity.replace(' ', ''));
-        if (order) {
-          if (orderBillingAddr) {
-            displayOrderBillingAddress(session, order);
-          } else if (orderShippingAddr) {
-            displayOrderShippingAddress(session, order);
-          } else if (orderLineItems) {
-            displayOrderLineItems(session, order);
-          } else {
-            displayOrderDetails(session, order);
-          }
+        if (order && orderBillingAddr) {
+          displayOrderBillingAddress(session, order);
+        } else if (order && orderShippingAddr) {
+          displayOrderShippingAddress(session, order);
+        } else if (order && orderLineItems) {
+          displayOrderLineItems(session, order);
+        } else if (order) {
+          displayOrderDetails(session, order);
         } else {
           session.send(`Order ${orderNumber.entity.replace(' ', '')} not found.`);
         }
