@@ -3,6 +3,11 @@ const moment = require('moment');
 const { rawStatus2DialogStatus, statusInt2Str } = require('../../utils/constants');
 const apiStore = require('../../apis/apiStore');
 
+/**
+ * Get a human-readable string which shows a summary of the given order
+ * @param order
+ * @returns {string}
+ */
 const getOrderDetails = (order) => {
   let str = '';
   if (order) {
@@ -79,22 +84,6 @@ const getOrderLineItems = (order) => {
     });
   }
   return lineItems;
-};
-
-/**
- * Filter all orders response by order number or some identifier
- * @param {Object[]} records
- * @param {String} identifier (can be OrderNumber, SourceKey, LogicbrokerKey, or LinkKey)
- * @returns {Object} object containing order information given order number, or null if not found
- */
-const getOrderByIdentifier = (records, identifier) => {
-  const ident = identifier.toString().toLowerCase();
-  const foundOrder = _.find(records, o =>
-    o.OrderNumber.toString().toLowerCase() === ident ||
-    o.Identifier.SourceKey.toString().toLowerCase() === identifier ||
-    o.Identifier.LogicbrokerKey.toString().toLowerCase() === identifier ||
-    o.Identifier.LinkKey.toString().toLowerCase() === identifier);
-  return foundOrder;
 };
 
 /**
@@ -181,7 +170,6 @@ module.exports = {
   getOrderBillingAddress,
   getOrderShippingAddress,
   getOrderLineItems,
-  getOrderByIdentifier,
   filterOrdersByStatus,
   getOpenOrders,
   getIdentifiers,

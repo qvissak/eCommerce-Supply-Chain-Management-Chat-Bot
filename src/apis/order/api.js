@@ -2,9 +2,38 @@ const Promise = require('bluebird');
 const request = require('../helpers/request');
 const moment = require('moment');
 
-// TODO: Get an order by order number
-// Make 3 api calls and try to find it
-// const getOrderByID = (orderNumber) => 
+/**
+ * Get an order by some unique identifier
+ * i.e ID# or REFERENCE#
+ * @param {Number or String} identifier
+ * @returns {Object}
+ */
+const getOrderByID = identifier =>
+  new Promise(async (resolve, reject) => {
+    // Make 3 api calls and try to find it
+    try {
+      let res = await Promise.all([
+        request.get('/v2/Orders', {
+          linkkey: identifier,
+        }),
+        request.get('/v2/Orders', {
+          sourceKey: identifier,
+        }),
+      ]);
+      res = res.filter(response => response.Records.length === 1);
+      if (!(res.length === 0)) {
+        resolve(res[0].Records[0]);
+      } else {
+        res = await request.get(`/v1/Orders/${identifier}`, {});
+        if (res.Body.SalesOrder) {
+          resolve(res.Body.SalesOrder);
+        }
+      }
+      reject(new Error(`Order ${identifier} not found!`));
+    } catch (e) {
+      reject(e);
+    }
+  });
 
 // Get all orders within the last two weeks by default of all statuses
 // TODO: implement paging
@@ -55,4 +84,5 @@ module.exports = {
   getOrders,
   getReadyOrders,
   putStatusOrders,
+  getOrderByID,
 };

@@ -1,6 +1,7 @@
 const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
 const orderAPIHelper = require('./helpers/orders');
+const apiStore = require('../apis/apiStore');
 const createCards = require('./helpers/cards');
 const { logger } = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
@@ -55,15 +56,25 @@ const displayOrderResponse = (session, resp, statusStr) => {
 };
 
 const displayOpenOrders = async (session, dateTime) => {
-  const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
-  const payloadOpen = orderAPIHelper.getOpenOrders(payload);
-  displayOrderResponse(session, payloadOpen.Records, 'Open');
+  try {
+    const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
+    const payloadOpen = orderAPIHelper.getOpenOrders(payload);
+    displayOrderResponse(session, payloadOpen.Records, 'Open');
+  } catch (err) {
+    console.error(err);
+    session.send('An error occurred while getting open orders.');
+  }
 };
 
 const displayOrdersByStatus = async (session, dateTime, statusInt) => {
-  const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
-  const statusStr = statusInt2Str[statusInt];
-  displayOrderResponse(session, payload.Records, statusStr);
+  try {
+    const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
+    const statusStr = statusInt2Str[statusInt];
+    displayOrderResponse(session, payload.Records, statusStr);
+  } catch (err) {
+    console.error(err);
+    session.send(`An error occurred while getting orders with status ${statusInt2Str[statusInt]}.`);
+  }
 };
 
 module.exports = [
@@ -99,17 +110,19 @@ module.exports = [
 
       // Response provided with an order number
       if (orderNumber) {
-        const order = orderAPIHelper
-          .getOrderByIdentifier(session.userData.orders, orderNumber.entity.replace(' ', ''));
-        if (order && orderBillingAddr) {
-          displayOrderBillingAddress(session, order);
-        } else if (order && orderShippingAddr) {
-          displayOrderShippingAddress(session, order);
-        } else if (order && orderLineItems) {
-          displayOrderLineItems(session, order);
-        } else if (order) {
-          displayOrderDetails(session, order);
-        } else {
+        try {
+          const order = await apiStore.order.getOrderByID(orderNumber.entity.replace(' ', ''));
+          if (orderBillingAddr) {
+            displayOrderBillingAddress(session, order);
+          } else if (orderShippingAddr) {
+            displayOrderShippingAddress(session, order);
+          } else if (orderLineItems) {
+            displayOrderLineItems(session, order);
+          } else {
+            displayOrderDetails(session, order);
+          }
+        } catch (err) {
+          console.error(err.message);
           session.send(`Order ${orderNumber.entity.replace(' ', '')} not found.`);
         }
       // Response to show open orders
