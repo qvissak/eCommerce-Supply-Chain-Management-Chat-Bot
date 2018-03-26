@@ -18,6 +18,8 @@ const { getOrders, getReadyOrders, putStatusOrders } = api;
 
 module.exports = {
   getOrderById,
+  // function that makes at most 3 api requests to find order by identifier
+  getOrderByIdentifier: api.getOrderByID,
   getOrders,
   getReadyOrders,
   putStatusOrders,
