@@ -34,6 +34,10 @@ module.exports = {
     r2AckOrder: 'Orders.Status::R2Ack',
     r2InvoiceOrder: 'Orders.Status::R2Invoice',
     r2ShipOrder: 'Orders.Status::R2Ship',
+    orderDetails: 'Orders.Details',
+    orderBillingAddress: 'Orders.Details::BillAddress',
+    orderShippingAddress: 'Orders.Details::ShipAddress',
+    orderLineItems: 'Orders.Details::LineItems',
     // Explanations of entities w/ syntax:
     // https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-reference-prebuilt-entities#subtypes-of-datetimev2
     date: 'builtin.datetimeV2.date',

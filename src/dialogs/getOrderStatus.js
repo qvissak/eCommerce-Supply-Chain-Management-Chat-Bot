@@ -7,14 +7,13 @@ const { logger } = require('../utils/logger');
 const displayOrderStatus = async (session, orderNumber) => {
   session.send('Give me one second, retrieving info for ' +
     `order number ${orderNumber}...`);
-  const resp = await apiStore.order.getOrderByID(orderNumber);
-
-  if (resp) {
+  try {
+    const resp = await apiStore.order.getOrderByID(orderNumber);
     const statusCode = resp.StatusCode;
     const status = statusInt2Str[statusCode].toDialogString().toLowerCase();
     session.send(`Order ${orderNumber} is in status ${status} (${statusCode}).`);
-  } else {
-    session.send(`Order ${orderNumber} not found.`);
+  } catch (e) {
+    session.send(`${e.error.Message}`);
   }
 };
 
@@ -28,14 +27,14 @@ module.exports = [
 
       // Response provided with an order number
       if (orderNumber) {
-        displayOrderStatus(session, orderNumber.entity);
+        displayOrderStatus(session, orderNumber.entity.replace(' ', ''));
       } else {
         session.send('I was unable to determine what you need. Can you be more specific?');
       }
 
       session.endDialog();
     } catch (e) {
-      logger.error('Retrieving Orders', e);
+      logger.error('Retrieving Order Status', e);
       console.error(e.message);
       session.send('Error!');
       session.endDialog();

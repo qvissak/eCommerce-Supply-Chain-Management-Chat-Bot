@@ -6,17 +6,40 @@ const createCards = require('./helpers/cards');
 const { logger } = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
 
-const displayOrderByIdentifier = async (session, orderNumber) => {
-  session.send('Give me one second, retrieving info for ' +
-    `order number ${orderNumber}...`);
-  const resp = await apiStore.order.getOrderByID(orderNumber);
-
-  if (resp) {
-    // TODO: implement output on display window
-    session.send('Order found. Check the console log.');
-    console.log(`Order found, result is\n${JSON.stringify(resp)}`);
+const displayOrderDetails = (session, order) => {
+  const info = orderAPIHelper.getOrderDetails(order);
+  if (info && info.length > 0) {
+    session.send(info);
   } else {
-    session.send(`Order ${orderNumber} not found.`);
+    session.send('Sorry, there is no information about this order.');
+  }
+  return order;
+};
+
+const displayOrderBillingAddress = (session, order) => {
+  const address = orderAPIHelper.getOrderBillingAddress(order);
+  if (address && address.length > 0) {
+    session.send(address);
+  } else {
+    session.send('Sorry, there is no billing address for that order.');
+  }
+};
+
+const displayOrderShippingAddress = (session, order) => {
+  const address = orderAPIHelper.getOrderShippingAddress(order);
+  if (address && address.length > 0) {
+    session.send(address);
+  } else {
+    session.send('Sorry, there is no shipping address for that order.');
+  }
+};
+
+const displayOrderLineItems = (session, order) => {
+  const lineItems = orderAPIHelper.getOrderLineItems(order);
+  if (lineItems && lineItems.length > 0) {
+    lineItems.forEach(item => session.send(item));
+  } else {
+    session.send('Sorry, there are no line items for that order.');
   }
 };
 
@@ -33,15 +56,25 @@ const displayOrderResponse = (session, resp, statusStr) => {
 };
 
 const displayOpenOrders = async (session, dateTime) => {
-  const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
-  const payloadOpen = orderAPIHelper.getOpenOrders(payload);
-  displayOrderResponse(session, payloadOpen.Records, 'Open');
+  try {
+    const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
+    const payloadOpen = orderAPIHelper.getOpenOrders(payload);
+    displayOrderResponse(session, payloadOpen.Records, 'Open');
+  } catch (err) {
+    console.error(err);
+    session.send('An error occurred while getting open orders.');
+  }
 };
 
 const displayOrdersByStatus = async (session, dateTime, statusInt) => {
-  const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
-  const statusStr = statusInt2Str[statusInt];
-  displayOrderResponse(session, payload.Records, statusStr);
+  try {
+    const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
+    const statusStr = statusInt2Str[statusInt];
+    displayOrderResponse(session, payload.Records, statusStr);
+  } catch (err) {
+    console.error(err);
+    session.send(`An error occurred while getting orders with status ${statusInt2Str[statusInt]}.`);
+  }
 };
 
 module.exports = [
@@ -61,6 +94,12 @@ module.exports = [
       const r2Invoice = builder.EntityRecognizer
         .findEntity(intent.entities, entities.r2InvoiceOrder);
       const r2Ship = builder.EntityRecognizer.findEntity(intent.entities, entities.r2ShipOrder);
+      const orderBillingAddr = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderBillingAddress);
+      const orderShippingAddr = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderShippingAddress);
+      const orderLineItems = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderLineItems);
       const date = builder.EntityRecognizer.findEntity(intent.entities, entities.date);
       const daterange = builder.EntityRecognizer.findEntity(intent.entities, entities.daterange);
       const datetimerange = builder.EntityRecognizer.findEntity(intent.entities, entities.datetr);
@@ -71,7 +110,20 @@ module.exports = [
 
       // Response provided with an order number
       if (orderNumber) {
-        displayOrderByIdentifier(session, orderNumber.entity);
+        try {
+          const order = await apiStore.order.getOrderByID(orderNumber.entity.replace(' ', ''));
+          if (orderBillingAddr) {
+            displayOrderBillingAddress(session, order);
+          } else if (orderShippingAddr) {
+            displayOrderShippingAddress(session, order);
+          } else if (orderLineItems) {
+            displayOrderLineItems(session, order);
+          } else {
+            displayOrderDetails(session, order);
+          }
+        } catch (e) {
+          session.send(`${e.error.Message}`);
+        }
       // Response to show open orders
       } else if (open) {
         displayOpenOrders(session, dateTime);
@@ -97,12 +149,11 @@ module.exports = [
       } else {
         session.send('I was unable to determine what you need. Can you be more specific?');
       }
-
       session.endDialog();
     } catch (e) {
       logger.error('Retrieving Orders', e);
       console.error(e);
-      session.send('Error!');
+      session.send('An error occurred!');
       session.endDialog();
     }
   },
