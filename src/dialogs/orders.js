@@ -1,6 +1,7 @@
 const builder = require('botbuilder');
 const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
 const orderAPIHelper = require('./helpers/orders');
+const apiStore = require('../apis/apiStore');
 const createCards = require('./helpers/cards');
 const { logger } = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
@@ -8,9 +9,7 @@ const dateHelper = require('./helpers/dates');
 const displayOrderByIdentifier = async (session, orderNumber) => {
   session.send('Give me one second, retrieving info for ' +
     `order number ${orderNumber}...`);
-  // TODO: call a different function directly below getOrderByID
-  const payload = await orderAPIHelper.getOrdersByStatus(session);
-  const resp = orderAPIHelper.getOrderByIdentifier(payload.Records, orderNumber);
+  const resp = await apiStore.order.getOrderByID(orderNumber);
 
   if (resp) {
     // TODO: implement output on display window

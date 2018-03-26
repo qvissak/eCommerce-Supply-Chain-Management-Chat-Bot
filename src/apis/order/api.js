@@ -2,9 +2,15 @@ const Promise = require('bluebird');
 const request = require('../helpers/request');
 const moment = require('moment');
 
-// Make 3 api calls and try to find it
+/**
+ * Get an order by some unique identifier
+ * i.e ID# or REFERENCE#
+ * @param {Number or String} identifier
+ * @returns {Object}
+ */
 const getOrderByID = identifier =>
   new Promise(async (resolve, reject) => {
+    // Make 3 api calls and try to find it
     try {
       let res = await Promise.all([
         request.get('/v2/Orders', {
@@ -15,7 +21,7 @@ const getOrderByID = identifier =>
         }),
       ]);
       res = res.filter(response => response.Records.length === 1);
-      if (!res.length === 0) {
+      if (!(res.length === 0)) {
         resolve(res[0].Records[0]);
       } else {
         res = await request.get(`/v1/Orders/${identifier}`, {});
