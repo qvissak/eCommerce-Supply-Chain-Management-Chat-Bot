@@ -94,8 +94,10 @@ module.exports = [
       const r2Invoice = builder.EntityRecognizer
         .findEntity(intent.entities, entities.r2InvoiceOrder);
       const r2Ship = builder.EntityRecognizer.findEntity(intent.entities, entities.r2ShipOrder);
-      const duplicate = builder.EntityRecognizer.findEntity(intent.entities, entities.duplicateOrder);
-      const submitted = builder.EntityRecognizer.findEntity(intent.entities, entities.submittedOrder);
+      const duplicate = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.duplicateOrder);
+      const submitted = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.submittedOrder);
       const ignored = builder.EntityRecognizer.findEntity(intent.entities, entities.ignoredOrder);
       const orderBillingAddr = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderBillingAddress);
@@ -114,7 +116,7 @@ module.exports = [
       // Response provided with an order number
       if (orderNumber) {
         try {
-          const order = await apiStore.order.getOrderByID(orderNumber.entity.replace(' ', ''));
+          const order = await apiStore.order.getOrderByID(orderNumber.entity);
           if (orderBillingAddr) {
             displayOrderBillingAddress(session, order);
           } else if (orderShippingAddr) {

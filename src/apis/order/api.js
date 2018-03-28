@@ -5,11 +5,13 @@ const moment = require('moment');
 /**
  * Get an order by some unique identifier
  * i.e ID# or REFERENCE#
- * @param {Number or String} identifier
+ * @param {Number or String} ident
  * @returns {Object}
  */
-const getOrderByID = identifier =>
+const getOrderByID = ident =>
   new Promise(async (resolve, reject) => {
+    // Strip white space from LUIS order entity
+    const identifier = ident.replace(/\s/g, '');
     // Make 3 api calls and try to find it
     try {
       let res = await Promise.all([
@@ -19,9 +21,13 @@ const getOrderByID = identifier =>
         request.get('/v2/Orders', {
           sourceKey: identifier,
         }),
+        request.get('/v2/Orders', {
+          partnerPo: identifier,
+        }),
       ]);
-      res = res.filter(response => response.Records.length === 1);
-      if (!(res.length === 0)) {
+      res = res.filter(response => response.Records.length > 0);
+      if (res.length !== 0) {
+        // TODO: don't always necessarily take the first one in Records
         resolve(res[0].Records[0]);
       } else {
         res = await request.get(`/v1/Orders/${identifier}`, {});
