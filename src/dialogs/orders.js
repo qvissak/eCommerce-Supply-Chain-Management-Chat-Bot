@@ -94,6 +94,9 @@ module.exports = [
       const r2Invoice = builder.EntityRecognizer
         .findEntity(intent.entities, entities.r2InvoiceOrder);
       const r2Ship = builder.EntityRecognizer.findEntity(intent.entities, entities.r2ShipOrder);
+      const duplicate = builder.EntityRecognizer.findEntity(intent.entities, entities.duplicateOrder);
+      const submitted = builder.EntityRecognizer.findEntity(intent.entities, entities.submittedOrder);
+      const ignored = builder.EntityRecognizer.findEntity(intent.entities, entities.ignoredOrder);
       const orderBillingAddr = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderBillingAddress);
       const orderShippingAddr = builder.EntityRecognizer
@@ -145,6 +148,15 @@ module.exports = [
       // Response to show ready to ship orders
       } else if (r2Ship) {
         displayOrdersByStatus(session, dateTime, statusStr2Int.R2Ship);
+      // Response to show duplicate orders
+      } else if (duplicate) {
+        displayOrdersByStatus(session, dateTime, statusStr2Int.Duplicate);
+      // Response to show ignored orders
+      } else if (ignored) {
+        displayOrdersByStatus(session, dateTime, statusStr2Int.Ignored);
+      // Response to show submitted orders
+      } else if (submitted) {
+        displayOrdersByStatus(session, dateTime, statusStr2Int.Submitted);
       // Default response
       } else {
         session.send('I was unable to determine what you need. Can you be more specific?');

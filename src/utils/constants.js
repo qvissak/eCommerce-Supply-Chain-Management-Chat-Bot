@@ -34,6 +34,9 @@ module.exports = {
     r2AckOrder: 'Orders.Status::R2Ack',
     r2InvoiceOrder: 'Orders.Status::R2Invoice',
     r2ShipOrder: 'Orders.Status::R2Ship',
+    duplicateOrder: 'Orders.Status::Duplicate',
+    submittedOrder: 'Orders.Status::Submitted',
+    ignoredOrder: 'Orders.Status::Ignored',
     orderDetails: 'Orders.Details',
     orderBillingAddress: 'Orders.Details::BillAddress',
     orderShippingAddress: 'Orders.Details::ShipAddress',
@@ -55,6 +58,7 @@ module.exports = {
     Complete: 1000,
     Cancelled: 1100,
     Failed: 1200,
+    Duplicate: 1300,
     Ignored: 1400,
   },
   statusInt2Str: {
@@ -68,6 +72,7 @@ module.exports = {
     1000: 'Complete',
     1100: 'Cancelled',
     1200: 'Failed',
+    1300: 'Duplicate',
     1400: 'Ignored',
   },
   rawStatus2DialogStatus: {
@@ -82,5 +87,6 @@ module.exports = {
     Failed: 'Failed',
     Ignored: 'Ignored',
     Open: 'Open',
+    Duplicate: 'Duplicate',
   },
 };
