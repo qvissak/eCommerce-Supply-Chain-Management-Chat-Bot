@@ -3,7 +3,7 @@ const _ = require('lodash');
 const config = require('../../config');
 
 const reqPromise = (uri, method, qsp = {}, body = undefined) => {
-  const queryParams = _.merge({}, { 'subscription-key': config.apiKey }, qsp);
+  const queryParams = _.merge({}, { 'subscription-key': config.getKey() }, qsp);
   let qs = '';
   Object.keys(queryParams).forEach((param, index) => {
     const sep = index === 0 ? '?' : '&';

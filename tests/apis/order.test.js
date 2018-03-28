@@ -1,4 +1,6 @@
 const ordersApi = require('../../src/apis/order/api');
+// set up the configuration API key with Siena's key
+require('../../src/config').setKey('9C39DFA4-E061-4B3E-9504-CBDB4EDB070D');
 
 const orderResHelper = (data) => {
   expect(data.Records).to.exist;
