@@ -67,12 +67,16 @@ const recognizer = new builder.LuisRecognizer(luisModelUrl);
 // Add the recognizer to the bot
 bot.recognizer(recognizer);
 
+bot.dialog(dialogs.login.id, dialog.login);
+bot.dialog(dialogs.logout.id, dialog.logout).triggerAction({
+  matches: dialogs.logout.intent,
+  confirmPrompt: 'This will wipe everything out. Are you sure?',
+});
 bot.dialog(dialogs.updateOrderStatus.id, dialog.updateOrderStatus)
   .triggerAction({ matches: dialogs.updateOrderStatus.intent });
 bot.dialog(dialogs.orders.id, dialog.order).triggerAction({ matches: dialogs.orders.intent });
 bot.dialog(dialogs.getOrderStatus.id, dialog.getOrderStatus)
   .triggerAction({ matches: dialogs.getOrderStatus.intent });
-bot.dialog(dialogs.login.id, dialog.login);
 bot.dialog(dialogs.help.id, dialog.help).triggerAction({ matches: dialogs.help.intent });
 
 // log any bot errors into the console
