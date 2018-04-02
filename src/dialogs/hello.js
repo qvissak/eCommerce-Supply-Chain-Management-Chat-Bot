@@ -9,13 +9,19 @@ const rootDialogs = [
       session.send(`Hello, I'm ${botName}.`);
       session.conversationData.didGreet = true;
       // at the start of the conversation, load the API key from userData
-      // and store the key in config
-      config.setKey(session.userData.apiKey);
+      // and store the key in config if the key is valid
+      console.log(session.userData.apiKey);
+      console.log(config.getKey());
+      if (config.getValid()) {
+        config.setKey(session.userData.apiKey);
+      }
     }
     next();
   },
   (session, args, next) => {
-    if (!config.getKey()) {
+    console.log(config.getValid());
+    config.setKey('9C39DFA4-E061-4B3E-9504-CBDB4EDB070D');
+    if (!config.getValid()) {
       session.beginDialog(login.id);
     }
     next();

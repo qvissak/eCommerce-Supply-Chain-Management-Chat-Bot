@@ -11,5 +11,8 @@
     "request": true,
     "logicBroker": true,
     "Dialog": true
+  },
+  "rules": {
+    "no-param-reassign": 0
   }
 }

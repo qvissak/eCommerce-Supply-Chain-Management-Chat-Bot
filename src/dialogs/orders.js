@@ -49,7 +49,7 @@ const displayOrderResponse = (session, resp, statusStr) => {
   if (resp && resp.length > 0) {
     // TODO: Find out which channels do not support cards
     const menuData = orderAPIHelper.getMenuData(resp, statusInt2Str);
-    createCards.heroCards(session, menuData, status);
+    createCards.heroCards(session, menuData);
   } else {
     session.send(`There are no ${status} orders at this time.`);
   }
