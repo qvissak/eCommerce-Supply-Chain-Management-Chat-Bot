@@ -13,6 +13,7 @@ const displayOrderStatus = async (session, orderNumber) => {
     const status = statusInt2Str[statusCode].toDialogString().toLowerCase();
     session.send(`Order ${orderNumber} is in status ${status} (${statusCode}).`);
   } catch (e) {
+    console.log(e);
     session.send(`${e.error.Message}`);
   }
 };
