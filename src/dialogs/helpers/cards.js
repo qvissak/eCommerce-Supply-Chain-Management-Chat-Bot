@@ -1,7 +1,7 @@
 const builder = require('botbuilder');
 
 class CreateCards {
-  static heroCards(session, menuData, statusStr) {
+  static heroCards(session, menuData) {
     const msg = new builder.Message(session);
     msg.attachmentLayout(builder.AttachmentLayout.carousel);
     const attachments = [];

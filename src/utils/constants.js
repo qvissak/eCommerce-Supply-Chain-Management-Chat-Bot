@@ -4,6 +4,10 @@ module.exports = {
     login: {
       id: 'login',
     },
+    logout: {
+      id: 'logout',
+      intent: 'Logout',
+    },
     help: {
       id: 'help',
       label: 'Help',

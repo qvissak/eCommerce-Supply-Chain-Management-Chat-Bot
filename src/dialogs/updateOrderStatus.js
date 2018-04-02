@@ -45,8 +45,10 @@ module.exports = [
       const r2Invoice = builder.EntityRecognizer
         .findEntity(intent.entities, entities.r2InvoiceOrder);
       const r2Ship = builder.EntityRecognizer.findEntity(intent.entities, entities.r2ShipOrder);
-      const duplicate = builder.EntityRecognizer.findEntity(intent.entities, entities.duplicateOrder);
-      const submitted = builder.EntityRecognizer.findEntity(intent.entities, entities.submittedOrder);
+      const duplicate = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.duplicateOrder);
+      const submitted = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.submittedOrder);
       const ignored = builder.EntityRecognizer.findEntity(intent.entities, entities.ignoredOrder);
 
       const status = open || failed || cancelled || completed || r2Ack ||
