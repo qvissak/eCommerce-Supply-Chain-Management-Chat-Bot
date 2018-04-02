@@ -5,8 +5,8 @@ module.exports = {
       id: 'login',
     },
     logout: {
-      id: '/delete',
-      intent: /delete all/i,
+      id: 'logout',
+      intent: 'Logout',
     },
     help: {
       id: 'help',

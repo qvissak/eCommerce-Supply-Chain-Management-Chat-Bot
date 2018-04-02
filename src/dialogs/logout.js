@@ -5,6 +5,6 @@ module.exports = [
     session.conversationData = {};
     session.dialogData = {};
     session.save();
-    session.endDialog('Everything has been wiped out');
+    session.endDialog('Successful log out.');
   },
 ];

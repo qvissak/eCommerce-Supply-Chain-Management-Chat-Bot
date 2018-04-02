@@ -17,15 +17,11 @@ module.exports = [
     session.send(`Validating your API key, ${key}.`);
     apiStore.auth.validateAPIkey(key, (isValid) => {
       if (isValid) {
-        // save the key to the configuration if it is valid
-        console.log("setting key")
         config.setKey(key);
         session.endDialog('Key authenticated. Welcome!');
       } else {
-        console.log("asking for key again")
         session.replaceDialog(dialogs.login.id, { reprompt: true });
       }
     });
-    console.log("huh");
   },
 ];
