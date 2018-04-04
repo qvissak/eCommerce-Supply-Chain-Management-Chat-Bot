@@ -128,7 +128,10 @@ module.exports = [
           } else if (orderLineItems) {
             displayOrderLineItems(session, order);
           } else {
-            displayOrderDetails(session, order);
+            // Default response if order number is present without other intent
+            session.send('Can you be a tad more specific? I see that you are inquiring about ' +
+            'an order. Try asking for order details, the billing address, shipping address ' +
+            `or line items for order ${orderNumber.entity}.`);
           }
         } catch (e) {
           session.send(`${e.error.Message}`);
