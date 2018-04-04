@@ -72,11 +72,17 @@ const getReadyOrders = () => new Promise(async (resolve, reject) => {
 * @param {String} Status - status code number to update
 * @param {Boolean} OnlyIncreaseStatus - safeguard to prevent update to a lower status
 * if true, status update of 1000 from 1400 would return { "Records" : [], ... }
-* @param {Array of Strings} LogicbrokerKeys - all 6 digit company ids to update
+* @param {Array of Strings} Identifiers - any type of id to update (PartnerPO,
+* LogicbrokerKey, SourceKey)
 */
-const putStatusOrders = (Status, OnlyIncreaseStatus = false, LogicbrokerKeys) =>
+const putStatusOrders = (Status, OnlyIncreaseStatus = false, Identifiers) =>
   new Promise(async (resolve, reject) => {
     try {
+      // Convert any identifiers into array of 6 digit logicbroker keys
+      const LogicbrokerKeys = await Promise.all(Identifiers.map(async (ident) => {
+        const info = await getOrderByID(ident);
+        return info.Identifier.LogicbrokerKey;
+      }));
       const res = await request.put('/v2/Orders/Status', {}, {
         Status, OnlyIncreaseStatus, LogicbrokerKeys,
       });
