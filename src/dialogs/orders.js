@@ -112,25 +112,8 @@ module.exports = [
       // Resolve date/daterange/datetimerange intents to date object
       // i.e { start: '2017-01-03', end: '2018-01-13'}
       const dateTime = dateHelper.getDateTime(session, (date || daterange || datetimerange));
-
-      // Response provided with an order number
-      if (orderNumber) {
-        try {
-          const order = await apiStore.order.getOrderByID(orderNumber.entity);
-          if (orderBillingAddr) {
-            displayOrderBillingAddress(session, order);
-          } else if (orderShippingAddr) {
-            displayOrderShippingAddress(session, order);
-          } else if (orderLineItems) {
-            displayOrderLineItems(session, order);
-          } else {
-            displayOrderDetails(session, order);
-          }
-        } catch (e) {
-          session.send(`${e.error.Message}`);
-        }
       // Response to show open orders
-      } else if (open) {
+      if (open) {
         displayOpenOrders(session, dateTime);
       // Response to show failed orders
       } else if (failed) {
@@ -159,6 +142,25 @@ module.exports = [
       // Response to show submitted orders
       } else if (submitted) {
         displayOrdersByStatus(session, dateTime, statusStr2Int.Submitted);
+      // Response provided with an order number
+      } else if (session.conversationData.recentOrderNumber || orderNumber) {
+        if (orderNumber) {
+          session.conversationData.recentOrderNumber = orderNumber.entity;
+        }
+        try {
+          const order = await apiStore.order.getOrderByID(session.conversationData.recentOrderNumber);
+          if (orderBillingAddr) {
+            displayOrderBillingAddress(session, order);
+          } else if (orderShippingAddr) {
+            displayOrderShippingAddress(session, order);
+          } else if (orderLineItems) {
+            displayOrderLineItems(session, order);
+          } else {
+            displayOrderDetails(session, order);
+          }
+        } catch (e) {
+          session.send(e.error.Message);
+        }
       // Default response
       } else {
         session.send('I was unable to determine what you need. Can you be more specific?');
