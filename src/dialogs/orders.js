@@ -105,6 +105,8 @@ module.exports = [
         .findEntity(intent.entities, entities.orderShippingAddress);
       const orderLineItems = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderLineItems);
+      const details = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderDetails);
       const date = builder.EntityRecognizer.findEntity(intent.entities, entities.date);
       const daterange = builder.EntityRecognizer.findEntity(intent.entities, entities.daterange);
       const datetimerange = builder.EntityRecognizer.findEntity(intent.entities, entities.datetr);
@@ -117,14 +119,19 @@ module.exports = [
       if (orderNumber) {
         try {
           const order = await apiStore.order.getOrderByID(orderNumber.entity);
-          if (orderBillingAddr) {
+          if (details) {
+            displayOrderDetails(session, order);
+          } else if (orderBillingAddr) {
             displayOrderBillingAddress(session, order);
           } else if (orderShippingAddr) {
             displayOrderShippingAddress(session, order);
           } else if (orderLineItems) {
             displayOrderLineItems(session, order);
           } else {
-            displayOrderDetails(session, order);
+            // Default response if order number is present without other intent
+            session.send('Can you be a tad more specific? I see that you are inquiring about ' +
+            'an order. Try asking for order details, the billing address, shipping address ' +
+            `or line items for order ${orderNumber.entity}.`);
           }
         } catch (e) {
           session.send(`${e.error.Message}`);
