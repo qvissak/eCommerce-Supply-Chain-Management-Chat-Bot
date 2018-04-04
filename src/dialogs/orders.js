@@ -1,5 +1,5 @@
 const builder = require('botbuilder');
-const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
+const { entities, statusStr2Int, statusInt2Str, dialogs } = require('../utils/constants');
 const orderAPIHelper = require('./helpers/orders');
 const apiStore = require('../apis/apiStore');
 const createCards = require('./helpers/cards');
@@ -70,7 +70,9 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
     const statusStr = statusInt2Str[statusInt];
-    displayOrderResponse(session, payload.Records, statusStr);
+    session.send(`I found ${payload.TotalRecords} orders for you!`);
+    //displayOrderResponse(session, payload.Records, statusStr);
+    session.beginDialog(dialogs.showResults.id, payload);
   } catch (err) {
     console.error(err);
     session.send(`An error occurred while getting orders with status ${statusInt2Str[statusInt]}.`);

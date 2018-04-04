@@ -28,6 +28,10 @@ module.exports = {
       label: 'GetOrderStatus',
       intent: 'GetStatus',
     },
+    showResults: {
+      id: 'showResults',
+      label: 'ShowResults',
+    }
   },
   entities: {
     orderNumber: 'Orders.Number',

@@ -78,6 +78,7 @@ bot.dialog(dialogs.orders.id, dialog.order).triggerAction({ matches: dialogs.ord
 bot.dialog(dialogs.getOrderStatus.id, dialog.getOrderStatus)
   .triggerAction({ matches: dialogs.getOrderStatus.intent });
 bot.dialog(dialogs.help.id, dialog.help).triggerAction({ matches: dialogs.help.intent });
+bot.dialog(dialogs.showResults.id, dialog.showResults);
 
 // log any bot errors into the console
 bot.on('error', (e) => {
