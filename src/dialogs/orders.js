@@ -70,6 +70,7 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
     const statusStr = statusInt2Str[statusInt];
+    console.log('*********** PAYLOAD **********', payload);
     session.send(`I found ${payload.TotalRecords} orders for you!`);
     // displayOrderResponse(session, payload.Records, statusStr);
     session.beginDialog(dialogs.showResults.id, { payload, statusStr });
