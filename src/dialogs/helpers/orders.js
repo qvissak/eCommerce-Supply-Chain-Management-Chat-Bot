@@ -169,7 +169,7 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
     response.Records = allRecords;
     return response;
   } catch (e) {
-    console.error(e);
+    console.error(e.message);
     session.send(`${e.error.Message}`);
     return [];
   }
