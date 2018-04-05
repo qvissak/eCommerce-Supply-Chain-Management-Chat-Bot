@@ -2,7 +2,8 @@ const builder = require('botbuilder');
 const apiStore = require('../apis/apiStore');
 const createCards = require('./helpers/cards');
 const { logger } = require('../utils/logger');
-const { dialogs } = require('../utils/constants');
+const orderAPIHelper = require('./helpers/orders');
+const { entities, statusStr2Int, statusInt2Str, dialogs } = require('../utils/constants');
 
 const displayOrderResponse = (session, resp, statusStr) => {
   const status = statusStr.toDialogString().toLowerCase();
@@ -17,20 +18,16 @@ const displayOrderResponse = (session, resp, statusStr) => {
 };
 
 module.exports = [
-	(session, arg) => {
-		const payload = arg;
-		const piece
-		
-
-	},
-     (session, payload) => {
-     	  displayOrderResponse(session, payload.Records, statusStr);
+     (session, arg) => {
+     	  session.dialogData.payload = arg.payload;
+     	  session.dialogData.statusStr = arg.statusStr;
+     	  displayOrderResponse(session, session.dialogData.payload.Records, session.dialogData.statusStr);
           builder.Prompts.choice(session, `Would you like to see more?`, `Yes|No`, { listStyle: 3 });
       },
       (session, results) => {
           if(results.response.entity === `Yes`){
           	session.send(`Ok! I'll show you more.`);
-            session.replaceDialog(dialogs.showResults.id, payload);
+            session.replaceDialog(dialogs.showResults.id, {payload: session.dialogData.payload, statusStr: session.dialogData.statusStr});
           }
           else{
             session.endDialog(`Ok, I won't show anymore.`)

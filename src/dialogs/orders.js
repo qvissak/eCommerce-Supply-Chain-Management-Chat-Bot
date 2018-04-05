@@ -72,7 +72,7 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
     const statusStr = statusInt2Str[statusInt];
     session.send(`I found ${payload.TotalRecords} orders for you!`);
     //displayOrderResponse(session, payload.Records, statusStr);
-    session.beginDialog(dialogs.showResults.id, payload);
+    session.beginDialog(dialogs.showResults.id, {payload, statusStr});
   } catch (err) {
     console.error(err);
     session.send(`An error occurred while getting orders with status ${statusInt2Str[statusInt]}.`);
