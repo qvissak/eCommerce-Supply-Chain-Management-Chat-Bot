@@ -62,10 +62,17 @@ logger.info('Luis config', {
 });
 
 // Main dialog with LUIS - create a recognizer that gets intents from LUIS
-const recognizer = new builder.LuisRecognizer(luisModelUrl);
+const recognizers = [new builder.LuisRecognizer(luisModelUrl)];
 
-// Add the recognizer to the bot
-bot.recognizer(recognizer);
+// Configure custom threshold for intent recognization
+const commonIntentDialog = new builder.IntentDialog({
+  recognizeMode: builder.RecognizeMode.onBegin,
+  recognizers,
+  intentThreshold: 0.6,
+});
+
+// Add recognizer to bot
+bot.recognizer(commonIntentDialog);
 
 bot.dialog(dialogs.login.id, dialog.login);
 bot.dialog(dialogs.logout.id, dialog.logout).triggerAction({
