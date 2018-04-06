@@ -160,12 +160,19 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
     let page = 0;
     let response = await apiStore.order.getOrders(from, to, status);
     const totalPages = response.TotalPages;
-    const allRecords = response.Records;
-    Array(totalPages).fill().forEach(async (el, i) => {
-      page = i + 1;
-      response = await apiStore.order.getOrders(from, to, status, page);
-      allRecords.concat(response.Records);
-    });
+    if(totalPages > 5){
+      session.send('Wow, there are a lot! This might take me a moment...');
+    }
+    let allRecords = response.Records;
+    for(page = 1; page<=totalPages; page++){
+      const temp = await apiStore.order.getOrders(from, to, status, page);
+      allRecords = allRecords.concat(temp.Records);
+    }
+    // Array(totalPages).fill().forEach(async (el, i) => {
+    //   page = i + 1;
+    //   const temp = await apiStore.order.getOrders(from, to, status, page);
+    //   allRecords = allRecords.concat(temp.Records);
+    // });
     response.Records = allRecords;
     return response;
   } catch (e) {

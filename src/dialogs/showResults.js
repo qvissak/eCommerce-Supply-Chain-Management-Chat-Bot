@@ -28,7 +28,7 @@ module.exports = [
     displayOrderResponse(session, dispRecords, statusStr);
     if(payload.Records.length > 0){
       builder.Prompts.choice(session, 
-        `There are ${payload.Records.length} results left to show. Would you like to see the next 10?`, 
+        `There are ${payload.Records.length} results left to show. Would you like to see more?`, 
         'Yes|No', { listStyle: 3 }
       );
     } else{
@@ -37,13 +37,13 @@ module.exports = [
   },
   (session, results) => {
     if (results.response.entity === 'Yes') {
-      session.send("Ok! I'll show you more.");
+      session.send("Okay!");
       session.replaceDialog(
         dialogs.showResults.id,
         { payload: payload, statusStr: statusStr }
       );
     } else {
-      session.endDialog("Ok, I won't show anymore.");
+      session.endDialog("No problem! How else can I help today?");
     }
   },
 ];

@@ -59,7 +59,9 @@ const displayOpenOrders = async (session, dateTime) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
     const payloadOpen = orderAPIHelper.getOpenOrders(payload);
-    displayOrderResponse(session, payloadOpen.Records, 'Open');
+    //displayOrderResponse(session, payloadOpen.Records, 'Open');
+    session.send(`I found ${payloadOpen.Records.length} open orders for you!`);
+    session.beginDialog(dialogs.showResults.id, { payload: payloadOpen, statusStr: 'Open' });
   } catch (err) {
     console.error(err);
     session.send('An error occurred while getting open orders.');
@@ -70,8 +72,7 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
     const statusStr = statusInt2Str[statusInt];
-    console.log('*********** PAYLOAD **********', payload);
-    session.send(`I found ${payload.TotalRecords} orders for you!`);
+    session.send(`I found ${payload.Records.length} orders for you!`);
     // displayOrderResponse(session, payload.Records, statusStr);
     session.beginDialog(dialogs.showResults.id, { payload, statusStr });
   } catch (err) {
