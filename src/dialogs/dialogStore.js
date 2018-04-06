@@ -6,6 +6,7 @@ const help = require('./help');
 const hello = require('./hello');
 const updateOrderStatus = require('./updateOrderStatus');
 const getOrderStatus = require('./getOrderStatus');
+const showResults = require('./showResults');
 
 module.exports = {
   order,
@@ -15,4 +16,5 @@ module.exports = {
   hello,
   updateOrderStatus,
   getOrderStatus,
+  showResults,
 };
