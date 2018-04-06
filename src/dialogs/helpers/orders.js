@@ -168,11 +168,6 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
       const temp = await apiStore.order.getOrders(from, to, status, page);
       allRecords = allRecords.concat(temp.Records);
     }
-    // Array(totalPages).fill().forEach(async (el, i) => {
-    //   page = i + 1;
-    //   const temp = await apiStore.order.getOrders(from, to, status, page);
-    //   allRecords = allRecords.concat(temp.Records);
-    // });
     response.Records = allRecords;
     return response;
   } catch (e) {
