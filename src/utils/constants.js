@@ -45,7 +45,7 @@ module.exports = {
     duplicateOrder: 'Orders.Status::Duplicate',
     submittedOrder: 'Orders.Status::Submitted',
     ignoredOrder: 'Orders.Status::Ignored',
-    orderDetails: 'Orders.Details',
+    orderDetails: 'Orders.Details::Details',
     orderBillingAddress: 'Orders.Details::BillAddress',
     orderShippingAddress: 'Orders.Details::ShipAddress',
     orderLineItems: 'Orders.Details::LineItems',
