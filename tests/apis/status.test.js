@@ -4,7 +4,7 @@ const statusUtil = require('../../src/apis/status/index');
 const statusResHelper = (data) => {
   expect(data.DocumentTypeStatuses).to.exist;
   expect(_.isArray(data.DocumentTypeStatuses)).to.be.true;
-  expect(data.DocumentTypeStatuses.length === 61).to.be.true;
+  expect(data.DocumentTypeStatuses.length).to.be.at.least(1);
 };
 
 describe('Status Endpoints - LogicBroker API Service', function() {

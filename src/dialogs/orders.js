@@ -1,8 +1,12 @@
 const builder = require('botbuilder');
-const { entities, statusStr2Int, statusInt2Str, dialogs } = require('../utils/constants');
+const {
+  entities,
+  statusStr2Int,
+  statusInt2Str,
+  dialogs,
+} = require('../utils/constants');
 const orderAPIHelper = require('./helpers/orders');
 const apiStore = require('../apis/apiStore');
-const createCards = require('./helpers/cards');
 const { logger } = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
 
@@ -50,7 +54,7 @@ const displayOpenOrders = async (session, dateTime) => {
     session.send(`I found ${payloadOpen.Records.length} open orders for you!`);
     session.beginDialog(dialogs.showResults.id, { payload: payloadOpen, statusStr: 'Open' });
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     session.send('An error occurred while getting open orders.');
   }
 };
@@ -62,7 +66,7 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
     session.send(`I found ${payload.Records.length} orders for you!`);
     session.beginDialog(dialogs.showResults.id, { payload, statusStr });
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     session.send(`An error occurred while getting orders with status ${statusInt2Str[statusInt]}.`);
   }
 };
@@ -162,9 +166,8 @@ module.exports = [
       }
       session.endDialog();
     } catch (e) {
-      logger.error('Retrieving Orders', e);
-      console.error(e);
       session.send('An error occurred!');
+      logger.error('Retrieving Orders', e);
       session.endDialog();
     }
   },
