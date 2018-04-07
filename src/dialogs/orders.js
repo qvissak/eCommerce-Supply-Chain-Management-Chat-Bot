@@ -1,5 +1,5 @@
 const builder = require('botbuilder');
-const { entities, statusStr2Int, statusInt2Str } = require('../utils/constants');
+const { entities, statusStr2Int, statusInt2Str, dialogs } = require('../utils/constants');
 const orderAPIHelper = require('./helpers/orders');
 const apiStore = require('../apis/apiStore');
 const createCards = require('./helpers/cards');
@@ -43,23 +43,12 @@ const displayOrderLineItems = (session, order) => {
   }
 };
 
-const displayOrderResponse = (session, resp, statusStr) => {
-  const status = statusStr.toDialogString().toLowerCase();
-
-  if (resp && resp.length > 0) {
-    // TODO: Find out which channels do not support cards
-    const menuData = orderAPIHelper.getMenuData(resp, statusInt2Str);
-    createCards.heroCards(session, menuData);
-  } else {
-    session.send(`There are no ${status} orders at this time.`);
-  }
-};
-
 const displayOpenOrders = async (session, dateTime) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
     const payloadOpen = orderAPIHelper.getOpenOrders(payload);
-    displayOrderResponse(session, payloadOpen.Records, 'Open');
+    session.send(`I found ${payloadOpen.Records.length} open orders for you!`);
+    session.beginDialog(dialogs.showResults.id, { payload: payloadOpen, statusStr: 'Open' });
   } catch (err) {
     console.error(err);
     session.send('An error occurred while getting open orders.');
@@ -70,7 +59,8 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
     const statusStr = statusInt2Str[statusInt];
-    displayOrderResponse(session, payload.Records, statusStr);
+    session.send(`I found ${payload.Records.length} orders for you!`);
+    session.beginDialog(dialogs.showResults.id, { payload, statusStr });
   } catch (err) {
     console.error(err);
     session.send(`An error occurred while getting orders with status ${statusInt2Str[statusInt]}.`);

@@ -157,9 +157,21 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
   try {
     const from = dateTime ? dateTime.start : dateTime;
     const to = dateTime ? dateTime.end : dateTime;
-    const response = await apiStore.order.getOrders(from, to, status);
+    let page = 0;
+    let response = await apiStore.order.getOrders(from, to, status);
+    const totalPages = response.TotalPages;
+    if(totalPages > 5){
+      session.send('Wow, there are a lot! This might take me a moment...');
+    }
+    let allRecords = response.Records;
+    for(page = 1; page<=totalPages; page++){
+      const temp = await apiStore.order.getOrders(from, to, status, page);
+      allRecords = allRecords.concat(temp.Records);
+    }
+    response.Records = allRecords;
     return response;
   } catch (e) {
+    console.error(e.message);
     session.send(`${e.error.Message}`);
     return [];
   }
