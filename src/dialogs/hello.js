@@ -1,4 +1,5 @@
 const { botName, dialogs: { login } } = require('../utils/constants');
+const smartResponse = require('./smartResponse');
 const apiStore = require('../apis/apiStore');
 const config = require('../config');
 
@@ -26,7 +27,8 @@ const rootDialogs = [
     next();
   },
   (session) => {
-    session.send('How can I help you today?');
+    const dialog = smartResponse.helpInquiry();
+    session.send(dialog);
   },
 ];
 

@@ -15,35 +15,37 @@ const displayOrderResponse = (session, resp, statusStr) => {
   }
 };
 
-var payload;
-var statusStr;
+let payload;
+let statusStr;
 
 module.exports = [
   (session, arg) => {
     payload = arg.payload;
     statusStr = arg.statusStr;
-    if(payload.length == 0)
+    if (payload.length === 0) {
       session.endDialog("I couldn't get the results, I'm sorry.");
-    var dispRecords = payload.Records.splice(0,10);
+    }
+    const dispRecords = payload.Records.splice(0, 10);
     displayOrderResponse(session, dispRecords, statusStr);
-    if(payload.Records.length > 0){
-      builder.Prompts.choice(session, 
-        `There are ${payload.Records.length} results left to show. Would you like to see more?`, 
-        'Yes|No', { listStyle: 3 }
+    if (payload.Records.length > 0) {
+      builder.Prompts.choice(
+        session,
+        `There are ${payload.Records.length} results left to show. Would you like to see more?`,
+        'Yes|No', { listStyle: 3 },
       );
-    } else{
+    } else {
       session.endDialog("That's all I found.");
     }
   },
   (session, results) => {
     if (results.response.entity === 'Yes') {
-      session.send("Okay!");
+      session.send('Okay!');
       session.replaceDialog(
         dialogs.showResults.id,
-        { payload: payload, statusStr: statusStr }
+        { payload, statusStr },
       );
     } else {
-      session.endDialog("No problem! How else can I help today?");
+      session.endDialog('No problem! How else can I help today?');
     }
   },
 ];
