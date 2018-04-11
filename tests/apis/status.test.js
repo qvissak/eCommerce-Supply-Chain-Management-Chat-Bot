@@ -9,7 +9,7 @@ const statusResHelper = (data) => {
 
 describe('Status Endpoints - LogicBroker API Service', function() {
   describe('getStatuses', function() {
-    it('No parameter should return 61 status types', function() {
+    it('No parameter should return at least 1 status type', function() {
       return statusApi.getStatuses()
         .then((data) => {
           statusResHelper(data);

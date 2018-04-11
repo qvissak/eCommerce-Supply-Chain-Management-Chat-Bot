@@ -17,14 +17,14 @@ const rootDialogs = [
     next();
   },
   (session, args, next) => {
-    apiStore.auth.validateAPIkey(session.conversationData.apiKey, (isValid) => {
-      session.userData.validKey = isValid;
-    });
-
     if (!session.userData.validKey) {
-      session.beginDialog(login.id);
-    }
-    next();
+      apiStore.auth.validateAPIkey(config.getKey(), (isValid) => {
+        session.userData.validKey = isValid;
+        if (!isValid) {
+          session.beginDialog(login.id);
+        } else next();
+      });
+    } else next();
   },
   (session) => {
     const dialog = smartResponse.helpInquiry();
