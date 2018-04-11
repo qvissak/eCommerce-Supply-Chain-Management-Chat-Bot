@@ -179,8 +179,8 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
           allRecords = allRecords.concat(temp.Records);
         }
         catch(e) {
-          console.log(`ERROR ON PAGE ${page}`);
-          console.error(e.message)
+          logger.info(`Error occured on ${page} for api call.`);
+          logger.error(e.message);
           attempt++;
           continue;
         }
