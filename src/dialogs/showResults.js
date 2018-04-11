@@ -10,8 +10,6 @@ const displayOrderResponse = (session, resp, statusStr) => {
     // TODO: Find out which channels do not support cards
     const menuData = orderAPIHelper.getMenuData(resp, statusInt2Str);
     createCards.heroCards(session, menuData);
-  } else {
-    session.send(`There are no ${status} orders at this time.`);
   }
 };
 
@@ -23,7 +21,7 @@ module.exports = [
     payload = arg.payload;
     statusStr = arg.statusStr;
     if (payload.length === 0) {
-      session.endDialog("I couldn't get the results, I'm sorry.");
+      session.endDialog("I couldn't get the results, I'm sorry. Try asking me to look at a smaller timeframe.");
     }
     const dispRecords = payload.Records.splice(0, 10);
     displayOrderResponse(session, dispRecords, statusStr);
