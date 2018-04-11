@@ -17,11 +17,11 @@ module.exports = [
     const useDemo = results.response.toLowerCase() === 'demo';
     const key = useDemo ? demoKey : results.response;
     session.userData.apiKey = key;
-    // API key validation (async)
     let msg = `Validating your API key, ${key}.`;
     // Do not show API key when using demo
     if (useDemo) { msg = 'Validating your API key...'; }
     session.send(msg);
+    // API key validation (async)
     apiStore.auth.validateAPIkey(key, (isValid) => {
       if (isValid) {
         config.setKey(key);
