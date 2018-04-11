@@ -190,9 +190,8 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
     response.Records = allRecords;
     return response;
   } catch (e) {
-    console.error(e.message);
+    logger.error(e.message);
     console.log(`The error occurred on page ${page}`);
-    //session.send(`I couldn't get quite everything, there were too many. Try asking me to get orders in a smaller time frame!`);
     return [];
   }
 };

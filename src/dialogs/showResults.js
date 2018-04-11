@@ -23,7 +23,7 @@ module.exports = [
     if (payload.length === 0) {
       session.endDialog("I couldn't get the results, I'm sorry. Try asking me to look at a smaller timeframe");
     }
-    const dispRecords = payload.Records.splice(0,10);
+    const dispRecords = payload.Records.splice(0, 10);
     displayOrderResponse(session, dispRecords, statusStr);
     if (payload.Records.length > 0) {
       builder.Prompts.choice(
