@@ -191,7 +191,7 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
     return response;
   } catch (e) {
     logger.error(e.message);
-    console.log(`The error occurred on page ${page}`);
+    logger.info(`The error occurred on page ${page}.`);
     return [];
   }
 };
