@@ -38,8 +38,8 @@ const connector = new builder.ChatConnector({
 // Listen for messages from users
 server.post('/api/messages', connector.listen());
 
-// Create your bot with a function to receive messages from the user
-// Initialize conversation from rootDialogs
+// Create bot with a function to receive messages from the user
+// Initialize conversation from hello.rootDialogs
 const bot = new builder.UniversalBot(connector, dialog.hello.rootDialogs)
   .use({ botbuilder })
   .set('storage', cosmosStorage);
@@ -75,10 +75,7 @@ const commonIntentDialog = new builder.IntentDialog({
 bot.recognizer(commonIntentDialog);
 
 bot.dialog(dialogs.login.id, dialog.login);
-bot.dialog(dialogs.logout.id, dialog.logout).triggerAction({
-  matches: dialogs.logout.intent,
-  confirmPrompt: 'This will wipe everything out. Are you sure?',
-});
+bot.dialog(dialogs.logout.id, dialog.logout).triggerAction({ matches: dialogs.logout.intent });
 bot.dialog(dialogs.updateOrderStatus.id, dialog.updateOrderStatus)
   .triggerAction({ matches: dialogs.updateOrderStatus.intent });
 bot.dialog(dialogs.orders.id, dialog.order).triggerAction({ matches: dialogs.orders.intent });
@@ -87,8 +84,7 @@ bot.dialog(dialogs.getOrderStatus.id, dialog.getOrderStatus)
 bot.dialog(dialogs.help.id, dialog.help).triggerAction({ matches: dialogs.help.intent });
 bot.dialog(dialogs.showResults.id, dialog.showResults);
 
-// log any bot errors into the console
+// log any bot errors
 bot.on('error', (e) => {
-  console.error('An error occurred', e);
   logger.error('An error occurred', e);
 });

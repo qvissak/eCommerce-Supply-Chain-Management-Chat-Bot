@@ -62,9 +62,8 @@ module.exports = [
 
       session.endDialog();
     } catch (e) {
-      logger.error('Retrieving Orders', e);
-      console.error(e.message);
       session.send('An error occurred!');
+      logger.error('Update Order Status', e);
       session.endDialog();
     }
   },
