@@ -12,10 +12,14 @@ module.exports = [
     builder.Prompts.text(session, text);
   },
   (session, results) => {
-    const key = results.response;
+    const useDemo = results.response.toLowerCase() === 'demo';
+    const key = useDemo ? config.getDemoKey() : results.response;
     session.userData.apiKey = key;
+    let msg = `Validating your API key, ${key}.`;
+    // Do not show API key when using demo
+    if (useDemo) { msg = 'Validating your API key...'; }
+    session.send(msg);
     // API key validation (async)
-    session.send(`Validating your API key, ${key}.`);
     apiStore.auth.validateAPIkey(key, (isValid) => {
       if (isValid) {
         config.setKey(key);
