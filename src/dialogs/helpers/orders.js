@@ -2,6 +2,7 @@ const _ = require('lodash');
 const moment = require('moment');
 const { rawStatus2DialogStatus, statusInt2Str } = require('../../utils/constants');
 const apiStore = require('../../apis/apiStore');
+const { logger } = require('../../utils/logger');
 
 /**
  * Get a human-readable string which shows a summary of the given order
@@ -158,20 +159,20 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
     const from = dateTime ? dateTime.start : dateTime;
     const to = dateTime ? dateTime.end : dateTime;
     let page = 0;
-    let response = await apiStore.order.getOrders(from, to, status);
+    const response = await apiStore.order.getOrders(from, to, status);
     const totalPages = response.TotalPages;
-    if(totalPages > 5){
+    if (totalPages > 5) {
       session.send('Wow, there are a lot! This might take me a moment...');
     }
     let allRecords = response.Records;
-    for(page = 1; page<=totalPages; page++){
+    for (page = 1; page <= totalPages; page++) {
       const temp = await apiStore.order.getOrders(from, to, status, page);
       allRecords = allRecords.concat(temp.Records);
     }
     response.Records = allRecords;
     return response;
   } catch (e) {
-    console.error(e.message);
+    logger.error(e);
     session.send(`${e.error.Message}`);
     return [];
   }

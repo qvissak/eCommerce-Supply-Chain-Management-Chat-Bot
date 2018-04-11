@@ -31,7 +31,7 @@ module.exports = {
     showResults: {
       id: 'showResults',
       label: 'ShowResults',
-    }
+    },
   },
   entities: {
     orderNumber: 'Orders.Number',

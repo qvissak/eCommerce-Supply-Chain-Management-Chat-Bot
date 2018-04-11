@@ -1,4 +1,5 @@
 const { botName, dialogs: { login } } = require('../utils/constants');
+const smartResponse = require('./smartResponse');
 const apiStore = require('../apis/apiStore');
 const config = require('../config');
 
@@ -10,13 +11,12 @@ const rootDialogs = [
       session.send(`Hello, I'm ${botName}.`);
       session.conversationData.didGreet = true;
       // at the start of the conversation, load the API key from userData
-      // and store the key in config if the key is valid
+      // and store the key in config
       config.setKey(session.userData.apiKey);
     }
     next();
   },
   (session, args, next) => {
-    // config.setKey('9C39DFA4-E061-4B3E-9504-CBDB4EDB070D');
     apiStore.auth.validateAPIkey(session.conversationData.apiKey, (isValid) => {
       session.userData.validKey = isValid;
     });
@@ -27,7 +27,8 @@ const rootDialogs = [
     next();
   },
   (session) => {
-    session.send('How can I help you today?');
+    const dialog = smartResponse.helpInquiry();
+    session.send(dialog);
   },
 ];
 

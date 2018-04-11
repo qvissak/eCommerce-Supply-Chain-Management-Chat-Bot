@@ -2,6 +2,7 @@ const builder = require('botbuilder');
 const { dialogs } = require('../utils/constants');
 const config = require('../config');
 const apiStore = require('../apis/apiStore');
+const smartResponse = require('./smartResponse');
 
 const demoKey = '9C39DFA4-E061-4B3E-9504-CBDB4EDB070D';
 
@@ -9,7 +10,7 @@ module.exports = [
   (session, args) => {
     const text = args && args.reprompt
       ? 'Your API key is invalid. Please try again.'
-      : 'Please enter your Logicbroker API key.';
+      : 'Please enter your Logicbroker API key to log in.';
     builder.Prompts.text(session, text);
   },
   (session, results) => {
@@ -24,7 +25,8 @@ module.exports = [
     apiStore.auth.validateAPIkey(key, (isValid) => {
       if (isValid) {
         config.setKey(key);
-        session.endDialog('Key authenticated. Welcome!');
+        const keyAuthDialog = smartResponse.keyAuthResponse();
+        session.endDialog(keyAuthDialog);
       } else {
         session.replaceDialog(dialogs.login.id, { reprompt: true });
       }
