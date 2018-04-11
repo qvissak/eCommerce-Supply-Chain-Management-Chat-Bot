@@ -21,7 +21,7 @@ module.exports = [
     payload = arg.payload;
     statusStr = arg.statusStr;
     if (payload.length === 0) {
-      session.endDialog("I couldn't get the results, I'm sorry. Try asking me to look at a smaller timeframe");
+      session.endDialog("I couldn't get the results, I'm sorry. Try asking me to look at a smaller timeframe.");
     }
     const dispRecords = payload.Records.splice(0, 10);
     displayOrderResponse(session, dispRecords, statusStr);
