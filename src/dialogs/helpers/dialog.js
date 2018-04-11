@@ -52,9 +52,22 @@ const keyAuthDialog = {
   keyAuth8: 'Your key checks out. Congratulations on remembering that long number.',
 };
 
+/* Dialog for when the user has to wait for responses too long in dialogs/helpers/orders.js */
+const waitingDialog = {
+  waiting1: 'Sorry to make you wait this long...',
+  waiting2: 'I\'m almost finished, I swear.',
+  waiting3: 'I\'ll be done in a moment. I promise!',
+  waiting4: 'It won\'t take much longer now!',
+  waiting5: 'Yikes, this is taking longer than I thought it would...',
+  waiting6: 'I promise I\'ll be finished soon!',
+  waiting7: 'Just a couple more seconds...',
+  waiting8: 'I\m so close!',
+};
+
 module.exports = {
   yeslogoutDialog,
   notlogoutDialog,
   helpInquiryDialog,
   keyAuthDialog,
+  waitingDialog,
 };

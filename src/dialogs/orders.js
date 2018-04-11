@@ -51,8 +51,12 @@ const displayOpenOrders = async (session, dateTime) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
     const payloadOpen = orderAPIHelper.getOpenOrders(payload);
-    session.send(`I found ${payloadOpen.Records.length} open orders for you!`);
-    session.beginDialog(dialogs.showResults.id, { payload: payloadOpen, statusStr: 'Open' });
+    if (payloadOpen.Records.length > 0) {
+      session.send(`I found ${payloadOpen.Records.length} open orders for you!`);
+      session.beginDialog(dialogs.showResults.id, { payload: payloadOpen, statusStr: 'Open' });
+    } else {
+      session.send(`There are no open orders at this time.`);
+    }
   } catch (err) {
     logger.error(err);
     session.send('An error occurred while getting open orders.');
@@ -63,8 +67,13 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
     const statusStr = statusInt2Str[statusInt];
-    session.send(`I found ${payload.Records.length} orders for you!`);
-    session.beginDialog(dialogs.showResults.id, { payload, statusStr });
+    if (payload.Records.length > 0) {
+      session.send(`I found ${payload.Records.length} orders for you!`);
+      session.beginDialog(dialogs.showResults.id, { payload, statusStr });
+    } else {
+      const status = statusStr.toDialogString().toLowerCase();
+      session.send(`There are no ${status} orders at this time.`);
+    }
   } catch (err) {
     logger.error(err);
     session.send(`An error occurred while getting orders with status ${statusInt2Str[statusInt]}.`);

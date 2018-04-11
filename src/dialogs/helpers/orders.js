@@ -3,6 +3,7 @@ const moment = require('moment');
 const { rawStatus2DialogStatus, statusInt2Str } = require('../../utils/constants');
 const apiStore = require('../../apis/apiStore');
 const { logger } = require('../../utils/logger');
+const smartResponse = require('../smartResponse');
 
 /**
  * Get a human-readable string which shows a summary of the given order
@@ -166,14 +167,32 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
     }
     let allRecords = response.Records;
     for (page = 1; page <= totalPages; page++) {
-      const temp = await apiStore.order.getOrders(from, to, status, page);
-      allRecords = allRecords.concat(temp.Records);
+      if ((page % 15) == 0) {
+        const dialog = smartResponse.waitingResponse();
+        session.send(dialog);
+      }
+      const maxAttempts = 3;
+      let attempt = 0;
+      while (attempt < maxAttempts) {
+        try {
+          const temp = await apiStore.order.getOrders(from, to, status, page);
+          allRecords = allRecords.concat(temp.Records);
+        }
+        catch(e) {
+          console.log(`ERROR ON PAGE ${page}`);
+          console.error(e.message)
+          attempt++;
+          continue;
+        }
+        attempt = maxAttempts;
+      }
     }
     response.Records = allRecords;
     return response;
   } catch (e) {
-    logger.error(e);
-    session.send(`${e.error.Message}`);
+    console.error(e.message);
+    console.log(`The error occurred on page ${page}`);
+    //session.send(`I couldn't get quite everything, there were too many. Try asking me to get orders in a smaller time frame!`);
     return [];
   }
 };
