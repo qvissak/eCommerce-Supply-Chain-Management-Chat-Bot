@@ -12,6 +12,7 @@ const getOrderByID = ident =>
   new Promise(async (resolve, reject) => {
     // Strip white space from LUIS order entity
     const identifier = ident.replace(/\s/g, '');
+    const notFoundError = new Error(`Order ${identifier} not found!`);
     // Make 3 api calls and try to find it
     try {
       let res = await Promise.all([
@@ -33,11 +34,11 @@ const getOrderByID = ident =>
         res = await request.get(`/v1/Orders/${identifier}`, {});
         if (res.Body.SalesOrder) {
           resolve(res.Body.SalesOrder);
-        }
+        } else throw notFoundError;
       }
-      reject(new Error(`Order ${identifier} not found!`));
     } catch (e) {
-      reject(e);
+      console.log(e.error.Message ? e.error.Message : 'An error occurred in api.js getOrderByID!');
+      reject(notFoundError);
     }
   });
 
