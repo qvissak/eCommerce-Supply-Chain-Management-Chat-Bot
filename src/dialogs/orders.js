@@ -137,7 +137,9 @@ module.exports = [
             `or line items for order ${orderNumber.entity}.`);
           }
         } catch (e) {
-          session.send(`${e.error.Message}`);
+          const msg = e.error && e.error.Message ? e.error.Message : e.message;
+          logger.error(msg);
+          session.send(msg);
         }
       // Response to show open orders
       } else if (open) {
