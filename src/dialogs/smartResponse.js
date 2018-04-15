@@ -9,6 +9,7 @@ const notLogoutResponse = () => getGenericResponse(responses.notlogoutDialog);
 const helpInquiry = () => getGenericResponse(responses.helpInquiryDialog);
 const keyAuthResponse = () => getGenericResponse(responses.keyAuthDialog);
 const waitingResponse = () => getGenericResponse(responses.waitingDialog);
+const insultResponse = () => getGenericResponse(responses.meanDialog);
 
 module.exports = {
   yesLogoutResponse,
@@ -16,4 +17,5 @@ module.exports = {
   helpInquiry,
   keyAuthResponse,
   waitingResponse,
+  insultResponse,
 };

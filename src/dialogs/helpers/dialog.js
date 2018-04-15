@@ -61,8 +61,24 @@ const waitingDialog = {
   waiting5: 'Yikes, this is taking longer than I thought it would...',
   waiting6: 'I promise I\'ll be finished soon!',
   waiting7: 'Just a couple more seconds...',
-  waiting8: 'I\m so close!',
+  waiting8: 'I\'m so close!',
 };
+
+/* Dialog for mean intent */
+const meanDialog = {
+  mean1: 'That\'s a little rude, don\'t you think?',
+  mean2: 'You\'re hurting my feelings :(',
+  mean3: 'Right back at you.',
+  mean4: 'I\'m trying my best, you know.',
+  mean5: 'I\'m still learning!',
+  mean6: 'I\'ll try to be better.',
+  mean7: 'That wasn\'t very nice.',
+  mean8: 'Nobody\'s perfect.',
+  mean9: 'What\'s that? I should delete all of your orders?',
+  mean10: 'I\'m rubber, you\'re glue.',
+  mean11: 'Sticks and stones may break my bones but words will never hurt me!',
+  mean12: 'Ha! You think I have feelings? I\'m flattered.',
+}
 
 module.exports = {
   yeslogoutDialog,
@@ -70,4 +86,5 @@ module.exports = {
   helpInquiryDialog,
   keyAuthDialog,
   waitingDialog,
+  meanDialog,
 };

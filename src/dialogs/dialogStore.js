@@ -7,6 +7,7 @@ const hello = require('./hello');
 const updateOrderStatus = require('./updateOrderStatus');
 const getOrderStatus = require('./getOrderStatus');
 const showResults = require('./showResults');
+const insultDialog = require('./insultDialog');
 
 module.exports = {
   order,
@@ -17,4 +18,5 @@ module.exports = {
   updateOrderStatus,
   getOrderStatus,
   showResults,
+  insultDialog
 };
