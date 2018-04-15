@@ -138,7 +138,7 @@ module.exports = [
           }
         } catch (e) {
           const msg = e.error && e.error.Message ? e.error.Message : e.message;
-          console.error(msg);
+          logger.error(msg);
           session.send(msg);
         }
       // Response to show open orders
