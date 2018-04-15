@@ -83,6 +83,7 @@ bot.dialog(dialogs.getOrderStatus.id, dialog.getOrderStatus)
   .triggerAction({ matches: dialogs.getOrderStatus.intent });
 bot.dialog(dialogs.help.id, dialog.help).triggerAction({ matches: dialogs.help.intent });
 bot.dialog(dialogs.showResults.id, dialog.showResults);
+bot.dialog(dialogs.insultDialog.id, dialog.insultDialog).triggerAction({ matches: dialogs.insultDialog.intent });
 
 // log any bot errors
 bot.on('error', (e) => {

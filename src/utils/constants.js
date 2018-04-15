@@ -32,6 +32,11 @@ module.exports = {
       id: 'showResults',
       label: 'ShowResults',
     },
+    insultDialog: {
+      id: 'insultDialog',
+      label: 'insultDialog',
+      intent: 'Mean',
+    }
   },
   entities: {
     orderNumber: 'Orders.Number',
