@@ -1,5 +1,6 @@
 const builder = require('botbuilder');
 const smartResponse = require('./smartResponse');
+const config = require('../config');
 
 module.exports = [
   (session) => {
@@ -11,12 +12,13 @@ module.exports = [
   },
   (session, results) => {
     if (results.response.entity === 'Yes') {
+      // Don't reset conversationData so that the bot doesn't
+      // reintroduce itself upon logging out / in again
       session.userData = {};
       session.privateConversationData = {};
-      // Comment out so that the bot doesn't reintroduce itself upon logging out / in again
-      // session.conversationData = {};
       session.dialogData = {};
       session.save();
+      config.resetKey();
       const dialog = smartResponse.yesLogoutResponse();
       session.endDialog(dialog);
     } else {
