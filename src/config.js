@@ -8,6 +8,7 @@ class Config {
   getKey() { return this.apiKey; }
   getDemoKey() { return this.demoKey; }
   setKey(key) { this.apiKey = key; }
+  resetKey() { this.apiKey = undefined; }
 }
 
 module.exports = new Config();

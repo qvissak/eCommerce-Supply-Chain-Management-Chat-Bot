@@ -7,7 +7,7 @@ const {
 } = require('../utils/constants');
 const orderAPIHelper = require('./helpers/orders');
 const apiStore = require('../apis/apiStore');
-const { logger } = require('../utils/logger');
+const logger = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
 
 const displayOrderDetails = (session, order) => {
@@ -55,7 +55,7 @@ const displayOpenOrders = async (session, dateTime) => {
       session.send(`I found ${payloadOpen.Records.length} open orders for you!`);
       session.beginDialog(dialogs.showResults.id, { payload: payloadOpen, statusStr: 'Open' });
     } else {
-      session.send(`There are no open orders at this time.`);
+      session.send('There are no open orders at this time.');
     }
   } catch (err) {
     logger.error(err);
