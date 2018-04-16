@@ -166,8 +166,8 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
       session.send('Wow, there are a lot! This might take me a moment...');
     }
     let allRecords = response.Records;
-    for (page = 1; page <= totalPages; page++) {
-      if ((page % 15) == 0) {
+    for (page = 1; page <= totalPages; page += 1) {
+      if ((page % 15) === 0) {
         const dialog = smartResponse.waitingResponse();
         session.send(dialog);
       }
@@ -177,11 +177,10 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
         try {
           const temp = await apiStore.order.getOrders(from, to, status, page);
           allRecords = allRecords.concat(temp.Records);
-        }
-        catch(e) {
-          logger.info(`Error occured on ${page} for api call.`);
+        } catch (e) {
+          logger.info(`Error occurred on ${page} for api call.`);
           logger.error(e.message);
-          attempt++;
+          attempt += 1;
           continue;
         }
         attempt = maxAttempts;
