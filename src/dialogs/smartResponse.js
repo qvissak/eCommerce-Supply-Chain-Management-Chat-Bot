@@ -11,7 +11,8 @@ const keyAuthResponse = () => getGenericResponse(responses.keyAuthDialog);
 const waitingResponse = () => getGenericResponse(responses.waitingDialog);
 const insultResponse = () => getGenericResponse(responses.meanDialog);
 const niceResponse = () => getGenericResponse(responses.niceDialog);
-const confusedResponse = () => getGenericResponse(responses.confusedDialog) + getGenericResponse(responses.conQuestionDialog);
+const confusedResponse = () =>
+  getGenericResponse(responses.confusedDialog) + getGenericResponse(responses.conQuestionDialog);
 const errorResponse = () => getGenericResponse(responses.errorDialog);
 
 module.exports = {

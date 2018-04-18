@@ -15,7 +15,7 @@ const displayOrderStatus = async (session, orderNumber) => {
     session.send(`Order ${orderNumber} is in status ${status} (${statusCode}).`);
   } catch (e) {
     const errorDialog = smartResponse.errorResponse();
-    session.send(errorDialog + 'getting the order status.');
+    session.send(`${errorDialog} getting the order status.`);
     if (e.error) { session.send(`${e.error.Message}`); }
     logger.error('Display Get Order Status', e);
   }

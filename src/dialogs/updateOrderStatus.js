@@ -11,7 +11,7 @@ const updateOrderStatus = async (session, status, OnlyIncreaseStatus, Logicbroke
     return response.TotalRecords > 0;
   } catch (e) {
     const errorDialog = smartResponse.errorResponse();
-    session.send(errorDialog + 'updating the status of that order.');
+    session.send(`${errorDialog} updating the status of that order.`);
     if (e.error) { session.send(`${e.error.Message}`); }
     return false;
   }

@@ -1,4 +1,5 @@
-/*eslint quotes: ["double"]*/
+/* eslint quotes: 0 */
+
 /* Dialog for "yes" response of logout.js */
 const yeslogoutDialog = {
   yeslogout1: "You've successfully been logged out.",
@@ -79,7 +80,7 @@ const meanDialog = {
   mean10: "I'm rubber, you're glue.",
   mean11: "Sticks and stones may break my bones but words will never hurt me!",
   mean12: "Ha! You think I have feelings? I'm flattered.",
-}
+};
 
 /* Dialog for nice intent */
 const niceDialog = {
@@ -88,7 +89,12 @@ const niceDialog = {
   nice3: "Aw, that's the nicest thing anyone's ever said to me.",
   nice4: "You are so sweet!",
   nice5: "More people in the world should be as kind as you!",
-}
+  nice6: "I appreciate the compliment.",
+  nice7: "You're too kind.",
+  nice8: "I like being appreciated.",
+  nice9: "I don't really have feelings, but thank you.",
+  nice10: "Glad to be of assistance!",
+};
 
 /* Dialog for generic answers when the bot can't understand an intent */
 const confusedDialog = {
@@ -100,7 +106,11 @@ const confusedDialog = {
   confused6: "I didn't catch that. ",
   confused7: "I'm not sure what you need. ",
   confused8: "I have to admit, I'm not sure what you're asking. ",
-}
+  confused9: "That didn't make sense to me.",
+  confused10: "I couldn't quite make that out.",
+  confused11: "I didn't understand you.",
+  confused12: "I'm still learning, I don't understand.",
+};
 
 /* Randomly combines with the confusedDialog to create a response */
 const conQuestionDialog = {
@@ -113,7 +123,10 @@ const conQuestionDialog = {
   cq7: "Try asking it a little differently.",
   cq8: "Could you be a tad more specific please?",
   cq9: "If you change your phrasing, I'll give it another shot!",
-}
+  cq10: "Try being as specific as possible.",
+  cq11: "I'll get it eventually, can you rephrase that?",
+  cq12: "Try being more explicit in your question.",
+};
 
 /* Dialog for randomizing error responses. Note the usage!! */
 const errorDialog = {
@@ -126,7 +139,8 @@ const errorDialog = {
   error7: "Oops! There was a problem ",
   error8: "Aw shoot. I ran into a problem ",
   error9: "Oops... There was an error ",
-}
+  error10: "Drat! I encountered an error while ",
+};
 
 module.exports = {
   yeslogoutDialog,

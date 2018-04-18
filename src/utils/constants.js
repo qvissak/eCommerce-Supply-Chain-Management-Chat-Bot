@@ -45,6 +45,7 @@ module.exports = {
   },
   entities: {
     orderNumber: 'Orders.Number',
+    orderStatus: 'Orders.StatusNumber',
     openOrder: 'Orders.Status::Open',
     failedOrder: 'Orders.Status::Failed',
     cancelledOrder: 'Orders.Status::Cancelled',
