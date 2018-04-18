@@ -81,6 +81,7 @@ const meanDialog = {
   mean12: "Ha! You think I have feelings? I'm flattered.",
 }
 
+/* Dialog for nice intent */
 const niceDialog = {
   nice1: "Aw! You're so kind.",
   nice2: "Thank you!",
@@ -89,6 +90,7 @@ const niceDialog = {
   nice5: "More people in the world should be as kind as you!",
 }
 
+/* Dialog for generic answers when the bot can't understand an intent */
 const confusedDialog = {
   confused1: "I was unable to determine what you need. ",
   confused2: "I'm not quite sure what you're asking me to do. ",
@@ -100,6 +102,7 @@ const confusedDialog = {
   confused8: "I have to admit, I'm not sure what you're asking. ",
 }
 
+/* Randomly combines with the confusedDialog to create a response */
 const conQuestionDialog = {
   cq1: "Can you be more specific?",
   cq2: "Could you rephrase that?",
@@ -112,6 +115,7 @@ const conQuestionDialog = {
   cq9: "If you change your phrasing, I'll give it another shot!",
 }
 
+/* Dialog for randomizing error responses. Note the usage!! */
 const errorDialog = {
   error1: "Uh oh! I ran into a problem while ",
   error2: "Aw man, something went wrong when ",
@@ -131,6 +135,7 @@ module.exports = {
   keyAuthDialog,
   waitingDialog,
   meanDialog,
+  niceDialog,
   confusedDialog,
   conQuestionDialog,
   errorDialog,
