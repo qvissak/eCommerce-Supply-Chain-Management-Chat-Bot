@@ -15,7 +15,7 @@ const getOrderDetails = (order) => {
   if (order) {
     const ident = order.Identifier.SourceKey ? `${order.Identifier.SourceKey}\n\n` : '';
     const status = order.StatusCode ? `Status: ${statusInt2Str[order.StatusCode]}.\n\n` : '';
-    const orderDate = order.OrderDate ? `Order date: ${moment(order.OrderDate).format('MMMM Do, YYYY')}.\n\n` : '';
+    const orderDate = order.OrderDate ? `Date of Purchase Order: : ${moment(order.OrderDate).format('MMMM Do, YYYY')}.\n\n` : '';
     let numLineItems = 'Number of line items: 0.';
     if (order.OrderLines) {
       numLineItems = `Number of line items: ${order.OrderLines.length}.`;
