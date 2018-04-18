@@ -145,9 +145,11 @@ const getMenuData = (records, statuses) => records.map(record => ({
  * @param {String} rawStatus
  * @returns {String} status
 */
-const toDialogString = String.prototype.toDialogString = function () {
+/* eslint-disable */
+String.prototype.toDialogString = function () {
   return _.get(rawStatus2DialogStatus, this);
 };
+/* eslint-enable */
 
 /**
  * Returns the total payload (not records, you need to call the attribute records to get records)
@@ -167,7 +169,7 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
     }
     let allRecords = response.Records;
     for (page = 1; page <= totalPages; page += 1) {
-      if ((page % 15) === 0) {
+      if (page % 15 === 0) {
         const dialog = smartResponse.waitingResponse();
         session.send(dialog);
       }
@@ -175,12 +177,14 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
       let attempt = 0;
       while (attempt < maxAttempts) {
         try {
+          // eslint-disable-next-line no-await-in-loop
           const temp = await apiStore.order.getOrders(from, to, status, page);
           allRecords = allRecords.concat(temp.Records);
         } catch (e) {
           logger.info(`Error occurred on ${page} for api call.`);
           logger.error(e);
           attempt += 1;
+          // eslint-disable-next-line no-continue
           continue;
         }
         attempt = maxAttempts;
@@ -204,6 +208,5 @@ module.exports = {
   getIdentifiers,
   getMenuData,
   getStatusByCode,
-  toDialogString,
   getOrdersByStatus,
 };
