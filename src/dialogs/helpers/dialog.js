@@ -81,6 +81,14 @@ const meanDialog = {
   mean12: "Ha! You think I have feelings? I'm flattered.",
 }
 
+const niceDialog = {
+  nice1: "Aw! You're so kind.",
+  nice2: "Thank you!",
+  nice3: "Aw, that's the nicest thing anyone's ever said to me.",
+  nice4: "You are so sweet!",
+  nice5: "More people in the world should be as kind as you!",
+}
+
 const confusedDialog = {
   confused1: "I was unable to determine what you need. ",
   confused2: "I'm not quite sure what you're asking me to do. ",

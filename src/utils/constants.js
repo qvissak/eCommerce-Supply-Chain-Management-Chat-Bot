@@ -36,7 +36,12 @@ module.exports = {
       id: 'insultDialog',
       label: 'insultDialog',
       intent: 'Mean',
-    }
+    },
+    niceDialog:{
+      id: 'niceDialog',
+      label: 'niceDialog',
+      intent: 'Nice',
+    },
   },
   entities: {
     orderNumber: 'Orders.Number',
