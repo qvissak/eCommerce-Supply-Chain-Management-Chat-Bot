@@ -75,7 +75,7 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
       session.send(`There are no ${status} orders at this time.`);
     }
   } catch (err) {
-    logger.error(err);
+    logger.log('error', 'Error with getting orders by status %j', err);
     session.send(`An error occurred while getting orders with status ${statusInt2Str[statusInt]}.`);
   }
 };
@@ -110,6 +110,8 @@ module.exports = [
         .findEntity(intent.entities, entities.orderLineItems);
       const details = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderDetails);
+      const statusNumber = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderStatus);
       const date = builder.EntityRecognizer.findEntity(intent.entities, entities.date);
       const daterange = builder.EntityRecognizer.findEntity(intent.entities, entities.daterange);
       const datetimerange = builder.EntityRecognizer.findEntity(intent.entities, entities.datetr);
@@ -140,6 +142,14 @@ module.exports = [
           const msg = e.error && e.error.Message ? e.error.Message : e.message;
           logger.error(msg);
           session.send(msg);
+        }
+      // Response to show orders by status number
+      } else if (statusNumber) {
+        const status = parseInt(statusNumber.entity, 10);
+        if (!statusInt2Str[status]) {
+          session.send(`Status number ${status} is not valid.`);
+        } else {
+          displayOrdersByStatus(session, dateTime, status);
         }
       // Response to show open orders
       } else if (open) {
