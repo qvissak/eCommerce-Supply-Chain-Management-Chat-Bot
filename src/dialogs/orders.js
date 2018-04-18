@@ -10,6 +10,7 @@ const apiStore = require('../apis/apiStore');
 const logger = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
 const moment = require('moment');
+const smartResponse = require('./smartResponse');
 
 const displayOrderDetails = (session, order) => {
   const info = orderAPIHelper.getOrderDetails(order);
@@ -67,7 +68,8 @@ const displayOpenOrders = async (session, dateTime) => {
     }
   } catch (err) {
     logger.error(err);
-    session.send('An error occurred while getting open orders.');
+    const errorDialog = smartResponse.errorResponse();
+    session.send(`${errorDialog} 'getting open orders.`);
   }
 };
 
@@ -90,8 +92,9 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
       session.send(`There are no ${status} orders between ${fromDate} and ${toDate}.`);
     }
   } catch (err) {
-    logger.error(err);
-    session.send(`An error occurred while getting orders with status ${statusInt2Str[statusInt]}.`);
+    const errorDialog = smartResponse.errorResponse();
+    session.send(`${errorDialog} getting orders with status ${statusInt2Str[statusInt].toDialogString().toLowerCase()}.`);
+    logger.log('Error', 'Error with getting orders by status %j', err);
   }
 };
 
@@ -125,6 +128,8 @@ module.exports = [
         .findEntity(intent.entities, entities.orderLineItems);
       const details = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderDetails);
+      const statusNumber = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.orderStatus);
       const date = builder.EntityRecognizer.findEntity(intent.entities, entities.date);
       const daterange = builder.EntityRecognizer.findEntity(intent.entities, entities.daterange);
       const datetimerange = builder.EntityRecognizer.findEntity(intent.entities, entities.datetr);
@@ -155,6 +160,14 @@ module.exports = [
           const msg = e.error && e.error.Message ? e.error.Message : e.message;
           logger.error(msg);
           session.send(msg);
+        }
+      // Response to show orders by status number
+      } else if (statusNumber) {
+        const status = parseInt(statusNumber.entity, 10);
+        if (!statusInt2Str[status]) {
+          session.send(`Status number ${status} is not valid.`);
+        } else {
+          displayOrdersByStatus(session, dateTime, status);
         }
       // Response to show open orders
       } else if (open) {
@@ -188,11 +201,12 @@ module.exports = [
         displayOrdersByStatus(session, dateTime, statusStr2Int.Submitted);
       // Default response
       } else {
-        session.send('I was unable to determine what you need. Can you be more specific?');
+        const confusedDialog = smartResponse.confusedResponse();
+        session.send(confusedDialog);
       }
       session.endDialog();
     } catch (e) {
-      session.send('An error occurred!');
+      session.send('I got an error!');
       logger.error('Retrieving Orders', e);
       session.endDialog();
     }

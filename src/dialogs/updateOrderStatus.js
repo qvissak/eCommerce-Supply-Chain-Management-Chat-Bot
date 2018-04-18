@@ -2,6 +2,7 @@ const builder = require('botbuilder');
 const { entities } = require('../utils/constants');
 const apiStore = require('../apis/apiStore');
 const { logger } = require('../utils/logger');
+const smartResponse = require('./smartResponse');
 
 const updateOrderStatus = async (session, status, OnlyIncreaseStatus, LogicbrokerKeys) => {
   try {
@@ -9,7 +10,9 @@ const updateOrderStatus = async (session, status, OnlyIncreaseStatus, Logicbroke
       .putStatusOrders(status, OnlyIncreaseStatus, LogicbrokerKeys);
     return response.TotalRecords > 0;
   } catch (e) {
-    session.send(`${e.error.Message}`);
+    const errorDialog = smartResponse.errorResponse();
+    session.send(`${errorDialog} updating the status of that order.`);
+    if (e.error) { session.send(`${e.error.Message}`); }
     return false;
   }
 };
@@ -57,7 +60,8 @@ module.exports = [
       if (orderNumber && status) {
         displayUpdateStatus(session, orderNumber.entity, status.type);
       } else {
-        session.send('I was unable to determine what you need. Can you be more specific?');
+        const confusedDialog = smartResponse.confusedResponse();
+        session.send(confusedDialog);
       }
 
       session.endDialog();
