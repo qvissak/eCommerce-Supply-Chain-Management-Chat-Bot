@@ -2,7 +2,7 @@ const _ = require('lodash');
 const moment = require('moment');
 const { rawStatus2DialogStatus, statusInt2Str } = require('../../utils/constants');
 const apiStore = require('../../apis/apiStore');
-const { logger } = require('../../utils/logger');
+const logger = require('../../utils/logger');
 const smartResponse = require('../smartResponse');
 
 /**
@@ -179,7 +179,7 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
           allRecords = allRecords.concat(temp.Records);
         } catch (e) {
           logger.info(`Error occurred on ${page} for api call.`);
-          logger.error(e.message);
+          logger.error(e);
           attempt += 1;
           continue;
         }
@@ -189,9 +189,8 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
     response.Records = allRecords;
     return response;
   } catch (e) {
-    logger.error(e.message);
-    logger.info(`The error occurred on page ${page}.`);
-    return [];
+    logger.error('HTTP Errror with status 400');
+    return { Records: [] };
   }
 };
 

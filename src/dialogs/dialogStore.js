@@ -18,5 +18,5 @@ module.exports = {
   updateOrderStatus,
   getOrderStatus,
   showResults,
-  insultDialog
+  insultDialog,
 };
