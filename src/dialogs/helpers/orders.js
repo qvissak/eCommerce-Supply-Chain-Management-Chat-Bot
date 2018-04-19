@@ -2,7 +2,7 @@ const _ = require('lodash');
 const moment = require('moment');
 const { rawStatus2DialogStatus, statusInt2Str } = require('../../utils/constants');
 const apiStore = require('../../apis/apiStore');
-const { logger } = require('../../utils/logger');
+const logger = require('../../utils/logger');
 const smartResponse = require('../smartResponse');
 
 /**
@@ -15,7 +15,7 @@ const getOrderDetails = (order) => {
   if (order) {
     const ident = order.Identifier.SourceKey ? `${order.Identifier.SourceKey}\n\n` : '';
     const status = order.StatusCode ? `Status: ${statusInt2Str[order.StatusCode]}.\n\n` : '';
-    const orderDate = order.OrderDate ? `Order date: ${moment(order.OrderDate).format('MMMM Do, YYYY')}.\n\n` : '';
+    const orderDate = order.OrderDate ? `Date of Purchase Order: ${moment(order.OrderDate).format('MMMM Do, YYYY')}.\n\n` : '';
     let numLineItems = 'Number of line items: 0.';
     if (order.OrderLines) {
       numLineItems = `Number of line items: ${order.OrderLines.length}.`;
@@ -145,9 +145,11 @@ const getMenuData = (records, statuses) => records.map(record => ({
  * @param {String} rawStatus
  * @returns {String} status
 */
-const toDialogString = String.prototype.toDialogString = function () {
+/* eslint-disable */
+String.prototype.toDialogString = function () {
   return _.get(rawStatus2DialogStatus, this);
 };
+/* eslint-enable */
 
 /**
  * Returns the total payload (not records, you need to call the attribute records to get records)
@@ -167,7 +169,7 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
     }
     let allRecords = response.Records;
     for (page = 1; page <= totalPages; page += 1) {
-      if ((page % 15) === 0) {
+      if (page % 15 === 0) {
         const dialog = smartResponse.waitingResponse();
         session.send(dialog);
       }
@@ -175,12 +177,14 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
       let attempt = 0;
       while (attempt < maxAttempts) {
         try {
+          // eslint-disable-next-line no-await-in-loop
           const temp = await apiStore.order.getOrders(from, to, status, page);
           allRecords = allRecords.concat(temp.Records);
         } catch (e) {
           logger.info(`Error occurred on ${page} for api call.`);
-          logger.error(e.message);
+          logger.error(e);
           attempt += 1;
+          // eslint-disable-next-line no-continue
           continue;
         }
         attempt = maxAttempts;
@@ -189,9 +193,8 @@ const getOrdersByStatus = async (session, dateTime = undefined, status = undefin
     response.Records = allRecords;
     return response;
   } catch (e) {
-    logger.error(e.message);
-    logger.info(`The error occurred on page ${page}.`);
-    return [];
+    logger.error('HTTP Errror with status 400');
+    return { Records: [] };
   }
 };
 
@@ -205,6 +208,5 @@ module.exports = {
   getIdentifiers,
   getMenuData,
   getStatusByCode,
-  toDialogString,
   getOrdersByStatus,
 };

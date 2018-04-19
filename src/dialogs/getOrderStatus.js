@@ -4,6 +4,7 @@ const apiStore = require('../apis/apiStore');
 const config = require('../config');
 const { logger } = require('../utils/logger');
 const { checkForLogin } = require('./helpers/auth');
+const smartResponse = require('./smartResponse');
 
 const displayOrderStatus = async (session, orderNumber) => {
   session.send('Give me one second, retrieving info for ' +
@@ -14,7 +15,9 @@ const displayOrderStatus = async (session, orderNumber) => {
     const status = statusInt2Str[statusCode].toDialogString().toLowerCase();
     session.send(`Order ${orderNumber} is in status ${status} (${statusCode}).`);
   } catch (e) {
-    session.send(`${e.error.Message}`);
+    const errorDialog = smartResponse.errorResponse();
+    session.send(`${errorDialog} getting the order status.`);
+    if (e.error) { session.send(`${e.error.Message}`); }
     logger.error('Display Get Order Status', e);
   }
 };
@@ -32,12 +35,13 @@ module.exports = [
       if (orderNumber) {
         displayOrderStatus(session, orderNumber.entity.replace(' ', ''));
       } else {
-        session.send('I was unable to determine what you need. Can you be more specific?');
+        const confusedDialog = smartResponse.confusedResponse();
+        session.send(confusedDialog);
       }
 
       session.endDialog();
     } catch (e) {
-      session.send('Error!');
+      session.send('I got an error!');
       logger.error('Get Order Status', e);
       session.endDialog();
     }

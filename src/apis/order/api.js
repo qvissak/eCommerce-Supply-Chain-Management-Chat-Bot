@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const request = require('../helpers/request');
 const moment = require('moment');
-const { logger } = require('../../utils/logger');
+const logger = require('../../utils/logger');
 
 /**
  * Get an order by some unique identifier
@@ -38,7 +38,7 @@ const getOrderByID = ident =>
         } else throw notFoundError;
       }
     } catch (e) {
-      logger.error(e.error.Message ? e.error.Message : 'An error occurred in api.js getOrderByID!');
+      logger.error('An error occurred in api.js getOrderByID! Error:', e);
       reject(notFoundError);
     }
   });

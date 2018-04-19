@@ -3,9 +3,7 @@ const createCards = require('./helpers/cards');
 const orderAPIHelper = require('./helpers/orders');
 const { statusInt2Str, dialogs } = require('../utils/constants');
 
-const displayOrderResponse = (session, resp, statusStr) => {
-  const status = statusStr.toDialogString().toLowerCase();
-
+const displayOrderResponse = (session, resp) => {
   if (resp && resp.length > 0) {
     // TODO: Find out which channels do not support cards
     const menuData = orderAPIHelper.getMenuData(resp, statusInt2Str);
@@ -18,13 +16,12 @@ let statusStr;
 
 module.exports = [
   (session, arg) => {
-    payload = arg.payload;
-    statusStr = arg.statusStr;
+    ({ payload, statusStr } = arg);
     if (payload.length === 0) {
       session.endDialog("I couldn't get the results, I'm sorry. Try asking me to look at a smaller timeframe.");
     }
     const dispRecords = payload.Records.splice(0, 10);
-    displayOrderResponse(session, dispRecords, statusStr);
+    displayOrderResponse(session, dispRecords);
     if (payload.Records.length > 0) {
       builder.Prompts.choice(
         session,

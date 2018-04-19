@@ -8,6 +8,7 @@ const updateOrderStatus = require('./updateOrderStatus');
 const getOrderStatus = require('./getOrderStatus');
 const showResults = require('./showResults');
 const insultDialog = require('./insultDialog');
+const niceDialog = require('./niceDialog');
 
 module.exports = {
   order,
@@ -19,4 +20,5 @@ module.exports = {
   getOrderStatus,
   showResults,
   insultDialog,
+  niceDialog,
 };
