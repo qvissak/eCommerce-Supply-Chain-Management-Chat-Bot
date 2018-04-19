@@ -8,7 +8,9 @@ const {
 const orderAPIHelper = require('./helpers/orders');
 const apiStore = require('../apis/apiStore');
 const logger = require('../utils/logger');
+const config = require('../config');
 const dateHelper = require('./helpers/dates');
+const { checkForLogin } = require('./helpers/auth');
 
 const displayOrderDetails = (session, order) => {
   const info = orderAPIHelper.getOrderDetails(order);
@@ -81,10 +83,11 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
 };
 
 module.exports = [
+  checkForLogin,
   async (session, args) => {
     try {
       // Capture intent from user
-      const { intent } = args;
+      const { intent } = config.getSavedArgs() || args;
       const orderNumber = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderNumber);
       const open = builder.EntityRecognizer.findEntity(intent.entities, entities.openOrder);

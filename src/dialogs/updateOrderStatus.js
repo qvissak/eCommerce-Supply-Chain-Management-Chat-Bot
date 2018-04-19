@@ -1,7 +1,9 @@
 const builder = require('botbuilder');
 const { entities } = require('../utils/constants');
 const apiStore = require('../apis/apiStore');
+const config = require('../config');
 const { logger } = require('../utils/logger');
+const { checkForLogin } = require('./helpers/auth');
 
 const updateOrderStatus = async (session, status, OnlyIncreaseStatus, LogicbrokerKeys) => {
   try {
@@ -28,10 +30,11 @@ const displayUpdateStatus = async (session, orderNumber, statusEntity) => {
 };
 
 module.exports = [
+  checkForLogin,
   async (session, args) => {
     try {
       // Capture intent and entities from user
-      const { intent } = args;
+      const { intent } = config.getSavedArgs() || args;
       const orderNumber = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderNumber);
       const open = builder.EntityRecognizer.findEntity(intent.entities, entities.openOrder);
