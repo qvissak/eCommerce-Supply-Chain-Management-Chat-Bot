@@ -8,7 +8,7 @@ class CreateCards {
     menuData.forEach((orderInfo) => {
       attachments.push(new builder.ThumbnailCard(session)
         .title(orderInfo.orderNumber)
-        .subtitle(orderInfo.orderDate)
+        .subtitle(`Date of Purchase Order: ${orderInfo.orderDate}`)
         .text(orderInfo.status)
         .buttons([
           builder.CardAction.imBack(session, `Get information for order ${orderInfo.orderNumber}`, 'Get Information'),

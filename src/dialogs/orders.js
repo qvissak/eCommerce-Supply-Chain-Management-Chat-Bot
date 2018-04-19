@@ -9,6 +9,7 @@ const orderAPIHelper = require('./helpers/orders');
 const apiStore = require('../apis/apiStore');
 const logger = require('../utils/logger');
 const dateHelper = require('./helpers/dates');
+const moment = require('moment');
 const smartResponse = require('./smartResponse');
 
 const displayOrderDetails = (session, order) => {
@@ -52,11 +53,18 @@ const displayOpenOrders = async (session, dateTime) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
     const payloadOpen = orderAPIHelper.getOpenOrders(payload);
+
+    const fromDate = dateTime && dateTime.start
+      ? dateTime.start
+      : moment().subtract(14, 'days').format('MM-DD-YYYY');
+    const toDate = dateTime && dateTime.end ? dateTime.end : moment().format('MM-DD-YYYY');
+
     if (payloadOpen.Records.length > 0) {
-      session.send(`I found ${payloadOpen.Records.length} open orders for you!`);
+      session.send(`I found ${payloadOpen.Records.length} open orders for you, ` +
+       `created in our system between ${fromDate} and ${toDate}.`);
       session.beginDialog(dialogs.showResults.id, { payload: payloadOpen, statusStr: 'Open' });
     } else {
-      session.send('There are no open orders at this time.');
+      session.send(`There are no open orders between ${fromDate} and ${toDate}.`);
     }
   } catch (err) {
     logger.error(err);
@@ -69,12 +77,19 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
     const statusStr = statusInt2Str[statusInt];
+
+    const fromDate = dateTime && dateTime.start
+      ? dateTime.start
+      : moment().subtract(14, 'days').format('MM-DD-YYYY');
+    const toDate = dateTime && dateTime.end ? dateTime.end : moment().format('MM-DD-YYYY');
+
     if (payload.Records.length > 0) {
-      session.send(`I found ${payload.Records.length} orders for you!`);
+      session.send(`I found ${payload.Records.length} orders for you, ` +
+      `created in our system between ${fromDate} and ${toDate}.`);
       session.beginDialog(dialogs.showResults.id, { payload, statusStr });
     } else {
       const status = statusStr.toDialogString().toLowerCase();
-      session.send(`There are no ${status} orders at this time.`);
+      session.send(`There are no ${status} orders between ${fromDate} and ${toDate}.`);
     }
   } catch (err) {
     const errorDialog = smartResponse.errorResponse();
