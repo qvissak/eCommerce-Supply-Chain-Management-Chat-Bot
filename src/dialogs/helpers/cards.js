@@ -9,7 +9,7 @@ class CreateCards {
       attachments.push(new builder.ThumbnailCard(session)
         .title(orderInfo.orderNumber)
         .subtitle(`Date of Purchase Order: ${orderInfo.orderDate}`)
-        .text(orderInfo.status)
+        .text(`PartnerPO: ${orderInfo.partnerPO}. Order status: ${orderInfo.status}.`)
         .buttons([
           builder.CardAction.imBack(session, `Get information for order ${orderInfo.orderNumber}`, 'Get Information'),
         ]));
