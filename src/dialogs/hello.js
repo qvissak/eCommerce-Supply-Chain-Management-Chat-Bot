@@ -1,7 +1,7 @@
-const { botName, dialogs: { login } } = require('../utils/constants');
+const { botName } = require('../utils/constants');
 const smartResponse = require('./smartResponse');
-const apiStore = require('../apis/apiStore');
 const config = require('../config');
+const { checkForLogin } = require('./helpers/auth');
 
 const rootDialogs = [
   (session, args, next) => {
@@ -16,16 +16,7 @@ const rootDialogs = [
     }
     next();
   },
-  (session, args, next) => {
-    if (!session.userData.validKey) {
-      apiStore.auth.validateAPIkey(config.getKey(), (isValid) => {
-        session.userData.validKey = isValid;
-        if (!isValid) {
-          session.beginDialog(login.id);
-        } else next();
-      });
-    } else next();
-  },
+  checkForLogin,
   (session) => {
     const dialog = smartResponse.helpInquiry();
     session.send(dialog);

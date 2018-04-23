@@ -1,9 +1,10 @@
 const builder = require('botbuilder');
 const { entities, statusInt2Str } = require('../utils/constants');
 const apiStore = require('../apis/apiStore');
+const config = require('../config');
 const { logger } = require('../utils/logger');
+const { checkForLogin } = require('./helpers/auth');
 const smartResponse = require('./smartResponse');
-
 
 const displayOrderStatus = async (session, orderNumber) => {
   session.send('Give me one second, retrieving info for ' +
@@ -22,10 +23,11 @@ const displayOrderStatus = async (session, orderNumber) => {
 };
 
 module.exports = [
+  checkForLogin,
   async (session, args) => {
     try {
       // Capture intent from user
-      const { intent } = args;
+      const { intent } = config.getSavedArgs() || args;
       const orderNumber = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderNumber);
 
