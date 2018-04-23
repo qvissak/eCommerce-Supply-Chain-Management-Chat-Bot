@@ -61,7 +61,7 @@ describe('Dialog Order Utils', () => {
   it('getMenuData should work', () => {
     const menuData = orderHelper.getMenuData(records, statuses);
     menuData.every((i) => {
-      expect(i).to.have.all.keys('identifier', 'orderNumber', 'orderDate', 'status');
+      expect(i).to.have.all.keys('identifier', 'orderNumber', 'partnerPO', 'orderDate', 'status');
       expect(Object.keys(i.identifier)).to.have.lengthOf(3);
     });
   });
