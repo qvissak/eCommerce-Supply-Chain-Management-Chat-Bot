@@ -57,9 +57,11 @@ const displayOpenOrders = async (session, dateTime) => {
     const payloadOpen = orderAPIHelper.getOpenOrders(payload);
 
     const fromDate = dateTime && dateTime.start
-      ? dateTime.start
+      ? moment(dateTime.start).format('MM-DD-YYYY')
       : moment().subtract(14, 'days').format('MM-DD-YYYY');
-    const toDate = dateTime && dateTime.end ? dateTime.end : moment().format('MM-DD-YYYY');
+    const toDate = dateTime && dateTime.end
+      ? moment(dateTime.end).format('MM-DD-YYYY')
+      : moment().format('MM-DD-YYYY');
 
     if (payloadOpen.Records.length > 0) {
       session.send(`I found ${payloadOpen.Records.length} open orders for you, ` +
