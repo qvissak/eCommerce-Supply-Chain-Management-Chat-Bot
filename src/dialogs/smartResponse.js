@@ -14,6 +14,8 @@ const niceResponse = () => getGenericResponse(responses.niceDialog);
 const confusedResponse = () =>
   getGenericResponse(responses.confusedDialog) + getGenericResponse(responses.conQuestionDialog);
 const errorResponse = () => getGenericResponse(responses.errorDialog);
+const helpResponse = () =>
+  getGenericResponse(responses.helpDialogPart1) + getGenericResponse(responses.helpDialogPart2);
 
 module.exports = {
   yesLogoutResponse,
@@ -25,4 +27,5 @@ module.exports = {
   niceResponse,
   confusedResponse,
   errorResponse,
+  helpResponse,
 };

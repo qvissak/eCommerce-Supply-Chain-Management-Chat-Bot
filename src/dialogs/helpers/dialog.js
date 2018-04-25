@@ -142,6 +142,28 @@ const errorDialog = {
   error10: "Drat! I encountered an error while ",
 };
 
+/* Dialog for when the user requests help */
+const helpDialogPart1 = {
+  help1: "I can do lots! ",
+  help2: "There are lots of things you can ask me. ",
+  help3: "I can be super useful! ",
+  help4: "Believe it or not, there are lots of things I can do. ",
+  help5: "I do my best to be a useful bot! ",
+  help6: "I'm well equipped to help you out! ",
+  help7: "I'm still learning, but I already have a few tricks up my sleeve. ",
+  help8: "I love to answer questions! ",
+};
+
+const helpDialogPart2 = {
+  help1: "Try any of these:",
+  help2: "Ask any of these things:",
+  help3: "You can try asking any of these:",
+  help4: "Give some of these questions a whirl:",
+  help5: "Try out some of these:",
+  help6: "Here are some suggestions to try:",
+  help7: "If you're looking for ideas, try asking me something like these:",
+};
+
 module.exports = {
   yeslogoutDialog,
   notlogoutDialog,
@@ -153,4 +175,6 @@ module.exports = {
   confusedDialog,
   conQuestionDialog,
   errorDialog,
+  helpDialogPart1,
+  helpDialogPart2,
 };
