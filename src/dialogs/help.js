@@ -1,6 +1,9 @@
 // help dialog
+const smartResponse = require('./smartResponse');
+
 module.exports = (session) => {
-  session.send('Some commands you can ask me...');
+  const helpDialog = smartResponse.helpResponse();
+  session.send(helpDialog);
   const commands = [
     'Show me open orders from two months ago',
     'Get cancelled orders from the past year',
