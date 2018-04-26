@@ -53,8 +53,9 @@ const displayOrderLineItems = (session, order) => {
 
 const displayOpenOrIncompleteOrders = async (session, dateTime, open = false) => {
   try {
+    const status = open ? 'Open' : 'Incomplete';
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
-    const payloadOpen = open
+    const payloadFiltered = open
       ? orderAPIHelper.getOpenOrders(payload)
       : orderAPIHelper.getIncompleteOrders(payload);
 
@@ -65,12 +66,12 @@ const displayOpenOrIncompleteOrders = async (session, dateTime, open = false) =>
       ? moment(dateTime.end).format('MM-DD-YYYY')
       : moment().format('MM-DD-YYYY');
 
-    if (payloadOpen.Records.length > 0) {
-      session.send(`I found ${payloadOpen.Records.length} open orders for you, ` +
+    if (payloadFiltered.Records.length > 0) {
+      session.send(`I found ${payloadFiltered.Records.length} ${status.toLowerCase()} orders for you, ` +
        `created in our system between ${fromDate} and ${toDate}.`);
-      session.beginDialog(dialogs.showResults.id, { payload: payloadOpen, statusStr: 'Open' });
+      session.beginDialog(dialogs.showResults.id, { payload: payloadFiltered, statusStr: status });
     } else {
-      session.send(`There are no open orders between ${fromDate} and ${toDate}.`);
+      session.send(`There are no ${status.toLowerCase()} orders between ${fromDate} and ${toDate}.`);
     }
   } catch (err) {
     logger.error(err);
