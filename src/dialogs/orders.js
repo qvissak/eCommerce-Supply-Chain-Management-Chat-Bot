@@ -51,10 +51,12 @@ const displayOrderLineItems = (session, order) => {
   }
 };
 
-const displayOpenOrders = async (session, dateTime) => {
+const displayOpenOrIncompleteOrders = async (session, dateTime, open = false) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime);
-    const payloadOpen = orderAPIHelper.getOpenOrders(payload);
+    const payloadOpen = open
+      ? orderAPIHelper.getOpenOrders(payload)
+      : orderAPIHelper.getIncompleteOrders(payload);
 
     const fromDate = dateTime && dateTime.start
       ? moment(dateTime.start).format('MM-DD-YYYY')
@@ -125,6 +127,10 @@ module.exports = [
       const submitted = builder.EntityRecognizer
         .findEntity(intent.entities, entities.submittedOrder);
       const ignored = builder.EntityRecognizer.findEntity(intent.entities, entities.ignoredOrder);
+      const incomplete = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.incompleteOrder);
+      const newOrder = builder.EntityRecognizer.findEntity(intent.entities, entities.newOrder);
+      const all = builder.EntityRecognizer.findEntity(intent.entities, entities.allOrders);
       const orderBillingAddr = builder.EntityRecognizer
         .findEntity(intent.entities, entities.orderBillingAddress);
       const orderShippingAddr = builder.EntityRecognizer
@@ -176,7 +182,7 @@ module.exports = [
         }
       // Response to show open orders
       } else if (open) {
-        displayOpenOrders(session, dateTime);
+        displayOpenOrIncompleteOrders(session, dateTime, true);
       // Response to show failed orders
       } else if (failed) {
         displayOrdersByStatus(session, dateTime, statusStr2Int.Failed);
@@ -204,6 +210,12 @@ module.exports = [
       // Response to show submitted orders
       } else if (submitted) {
         displayOrdersByStatus(session, dateTime, statusStr2Int.Submitted);
+      } else if (incomplete) {
+        displayOpenOrIncompleteOrders(session, dateTime);
+      } else if (newOrder) {
+        displayOrdersByStatus(session, dateTime, statusStr2Int.New);
+      } else if (all) {
+        displayOrdersByStatus(session);
       // Default response
       } else {
         const confusedDialog = smartResponse.confusedResponse();

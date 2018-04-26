@@ -37,7 +37,7 @@ module.exports = {
       label: 'insultDialog',
       intent: 'Mean',
     },
-    niceDialog:{
+    niceDialog: {
       id: 'niceDialog',
       label: 'niceDialog',
       intent: 'Nice',
@@ -56,6 +56,9 @@ module.exports = {
     duplicateOrder: 'Orders.Status::Duplicate',
     submittedOrder: 'Orders.Status::Submitted',
     ignoredOrder: 'Orders.Status::Ignored',
+    incompleteOrder: 'Orders.Status2::Incomplete',
+    newOrder: 'Orders.Status2::New',
+    allOrders: 'Orders.Status2::All',
     orderDetails: 'Orders.Details::Details',
     orderBillingAddress: 'Orders.Details::BillAddress',
     orderShippingAddress: 'Orders.Details::ShipAddress',
