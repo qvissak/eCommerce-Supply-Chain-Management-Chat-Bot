@@ -110,6 +110,14 @@ const getOpenOrders = (payload) => {
   return rv;
 };
 
+const getIncompleteOrders = (payload) => {
+  const rv = payload;
+  const records = rv.Records;
+  const incompleteOrders = _.filter(records, o => o.StatusCode > 1000);
+  rv.Records = incompleteOrders;
+  return rv;
+};
+
 /**
  * Maps orders response to object of identifiers
  * @param {Object[]} records
@@ -210,4 +218,5 @@ module.exports = {
   getMenuData,
   getStatusByCode,
   getOrdersByStatus,
+  getIncompleteOrders,
 };

@@ -7,7 +7,7 @@ const reqPromise = (uri, method, qsp = {}, body = undefined) => {
   let qs = '';
   Object.keys(queryParams).forEach((param, index) => {
     const sep = index === 0 ? '?' : '&';
-    if (queryParams[param]) {
+    if (queryParams[param] !== '' && queryParams[param] !== undefined) {
       qs += `${sep}${param}=${queryParams[param]}`;
     }
   });

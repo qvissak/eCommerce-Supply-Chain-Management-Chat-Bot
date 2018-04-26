@@ -50,7 +50,7 @@ const getOrders = (fromDate, toDate, statusStr, page = 0) =>
     try {
       const from = fromDate || moment().subtract(14, 'days').format('MM-DD-YYYY');
       const to = toDate || '';
-      const status = statusStr || '';
+      const status = statusStr !== undefined ? statusStr : '';
       const pageSize = 50;
       const res = await request.get('/v2/Orders', {
         from, to, status, page, pageSize,

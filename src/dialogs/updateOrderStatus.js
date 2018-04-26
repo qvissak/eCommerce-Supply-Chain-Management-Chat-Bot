@@ -20,8 +20,8 @@ const updateOrderStatus = async (session, status, OnlyIncreaseStatus, Logicbroke
 };
 
 const displayUpdateStatus = async (session, orderNumber, statusEntity) => {
-  // omit "Orders.Status::" substring from statusEntity
-  const status = statusEntity.substring(15).toDialogString();
+  // omit "Orders.Status::" or "Orders.Status2::" substring from statusEntity
+  const status = statusEntity.split('::')[1].toDialogString();
   session.send('Give me one second, updating status of ' +
     `order number ${orderNumber} to "${status}".`);
 
@@ -55,9 +55,12 @@ module.exports = [
       const submitted = builder.EntityRecognizer
         .findEntity(intent.entities, entities.submittedOrder);
       const ignored = builder.EntityRecognizer.findEntity(intent.entities, entities.ignoredOrder);
+      const incomplete = builder.EntityRecognizer
+        .findEntity(intent.entities, entities.incompleteOrder);
+      const newOrder = builder.EntityRecognizer.findEntity(intent.entities, entities.newOrder);
 
-      const status = open || failed || cancelled || completed || r2Ack ||
-        r2Invoice || r2Ship || duplicate || submitted || ignored;
+      const status = open || failed || cancelled || completed || r2Ack || incomplete ||
+        r2Invoice || r2Ship || duplicate || submitted || ignored || newOrder;
 
       // Response provided with an order number
       if (orderNumber && status) {
