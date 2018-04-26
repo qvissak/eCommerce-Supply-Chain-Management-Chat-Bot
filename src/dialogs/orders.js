@@ -215,7 +215,7 @@ module.exports = [
       } else if (newOrder) {
         displayOrdersByStatus(session, dateTime, statusStr2Int.New);
       } else if (all) {
-        displayOrdersByStatus(session);
+        displayOrdersByStatus(session, dateTime);
       // Default response
       } else {
         const confusedDialog = smartResponse.confusedResponse();
