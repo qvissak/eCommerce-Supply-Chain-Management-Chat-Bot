@@ -7,7 +7,7 @@ module.exports = (session) => {
   const commands = [
     'Show me open orders from two months ago',
     'Get cancelled orders from the past year',
-    'Retrieve duplicate orders from March 2, 2017 to April 2, 2018',
+    'Retrieve duplicate orders from March 2, 2017 to April 2, 2017',
     'Give me line items from order TEST0009',
     'Get information for order TEST0009',
     'Billing address of order TEST0015',

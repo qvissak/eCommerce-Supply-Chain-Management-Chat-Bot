@@ -72,7 +72,7 @@ const displayOpenOrIncompleteOrders = async (session, dateTime, open = false) =>
         : 'order';
       session.send(`I found ${payloadFiltered.Records.length} ${status.toLowerCase()} ${wordForm} for you, ` +
        `created in our system between ${fromDate} and ${toDate}.`);
-      session.beginDialog(dialogs.showResults.id, { payload: payloadFiltered, statusStr: status });
+      session.beginDialog(dialogs.showResults.id, { payload: payloadFiltered });
     } else {
       session.send(`There are no ${status.toLowerCase()} orders between ${fromDate} and ${toDate}.`);
     }
@@ -86,7 +86,7 @@ const displayOpenOrIncompleteOrders = async (session, dateTime, open = false) =>
 const displayOrdersByStatus = async (session, dateTime, statusInt) => {
   try {
     const payload = await orderAPIHelper.getOrdersByStatus(session, dateTime, statusInt);
-    const statusStr = statusInt2Str[statusInt];
+    const status = statusInt2Str[statusInt].toDialogString().toLowerCase();
 
     const fromDate = dateTime && dateTime.start
       ? dateTime.start
@@ -97,11 +97,10 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
       const wordForm = payload.Records.length > 1
         ? 'orders'
         : 'order';
-      session.send(`I found ${payload.Records.length} ${statusStr.toLowerCase()} ${wordForm} for you, ` +
+      session.send(`I found ${payload.Records.length} ${status} ${wordForm} for you, ` +
       `created in our system between ${fromDate} and ${toDate}.`);
-      session.beginDialog(dialogs.showResults.id, { payload, statusStr });
+      session.beginDialog(dialogs.showResults.id, { payload });
     } else {
-      const status = statusStr.toDialogString().toLowerCase();
       session.send(`There are no ${status} orders between ${fromDate} and ${toDate}.`);
     }
   } catch (err) {
