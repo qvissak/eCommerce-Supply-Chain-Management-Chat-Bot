@@ -67,7 +67,10 @@ const displayOpenOrIncompleteOrders = async (session, dateTime, open = false) =>
       : moment().format('MM-DD-YYYY');
 
     if (payloadFiltered.Records.length > 0) {
-      session.send(`I found ${payloadFiltered.Records.length} ${status.toLowerCase()} orders for you, ` +
+      const wordForm = payloadFiltered.Records.length > 1
+        ? 'orders'
+        : 'order';
+      session.send(`I found ${payloadFiltered.Records.length} ${status.toLowerCase()} ${wordForm} for you, ` +
        `created in our system between ${fromDate} and ${toDate}.`);
       session.beginDialog(dialogs.showResults.id, { payload: payloadFiltered, statusStr: status });
     } else {
@@ -91,7 +94,10 @@ const displayOrdersByStatus = async (session, dateTime, statusInt) => {
     const toDate = dateTime && dateTime.end ? dateTime.end : moment().format('MM-DD-YYYY');
 
     if (payload.Records.length > 0) {
-      session.send(`I found ${payload.Records.length} orders for you, ` +
+      const wordForm = payload.Records.length > 1
+        ? 'orders'
+        : 'order';
+      session.send(`I found ${payload.Records.length} ${statusStr.toLowerCase()} ${wordForm} for you, ` +
       `created in our system between ${fromDate} and ${toDate}.`);
       session.beginDialog(dialogs.showResults.id, { payload, statusStr });
     } else {

@@ -106,10 +106,10 @@ const confusedDialog = {
   confused6: "I didn't catch that. ",
   confused7: "I'm not sure what you need. ",
   confused8: "I have to admit, I'm not sure what you're asking. ",
-  confused9: "That didn't make sense to me.",
-  confused10: "I couldn't quite make that out.",
-  confused11: "I didn't understand you.",
-  confused12: "I'm still learning, I don't understand.",
+  confused9: "That didn't make sense to me. ",
+  confused10: "I couldn't quite make that out. ",
+  confused11: "I didn't understand you. ",
+  confused12: "I'm still learning, I don't understand. ",
 };
 
 /* Randomly combines with the confusedDialog to create a response */
