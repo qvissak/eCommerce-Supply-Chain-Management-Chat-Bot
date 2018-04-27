@@ -10,13 +10,13 @@ const getDateTime = (session, dateTime) => {
   if (!dateTime) return undefined;
   const { values } = dateTime.resolution;
   if (values[0].type === 'date') {
-    const possibilities = values.map(date => date.value).filter(date => date <= moment());
+    const possibilities = values.map(date => date.value);
     if (possibilities.length > 1) {
       builder.Prompts.choice(session, 'To which date were you referring?', possibilities, { listStyle: 3 });
       // TODO: get selection
       // return { start: , end: };
     }
-    return { start: possibilities[0], end: possibilities[0] };
+    return { start: possibilities[0], end: moment().format('MM-DD-YYYY') };
   } else if (values[0].type === 'daterange') {
     if (values.length > 1) {
       // filter out future dates
