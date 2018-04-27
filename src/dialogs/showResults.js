@@ -12,11 +12,10 @@ const displayOrderResponse = (session, resp) => {
 };
 
 let payload;
-let statusStr;
 
 module.exports = [
   (session, arg) => {
-    ({ payload, statusStr } = arg);
+    ({ payload } = arg);
     if (payload.length === 0) {
       session.endDialog("I couldn't get the results, I'm sorry. Try asking me to look at a smaller timeframe.");
     }
@@ -43,7 +42,7 @@ module.exports = [
       session.send('Okay!');
       session.replaceDialog(
         dialogs.showResults.id,
-        { payload, statusStr },
+        { payload },
       );
     } else {
       session.endDialog('No problem! How else can I help today?');
