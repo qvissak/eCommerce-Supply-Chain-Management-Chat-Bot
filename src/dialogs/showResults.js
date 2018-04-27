@@ -22,10 +22,16 @@ module.exports = [
     }
     const dispRecords = payload.Records.splice(0, 10);
     displayOrderResponse(session, dispRecords);
-    if (payload.Records.length > 0) {
+    if (payload.Records.length > 1) {
       builder.Prompts.choice(
         session,
         `There are ${payload.Records.length} results left to show. Would you like to see more?`,
+        'Yes|No', { listStyle: 3 },
+      );
+    } else if (payload.Records.length === 1) {
+      builder.Prompts.choice(
+        session,
+        `There is ${payload.Records.length} result left to show. Would you like to see it?`,
         'Yes|No', { listStyle: 3 },
       );
     } else {
